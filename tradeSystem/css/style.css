@@ -5363,6 +5363,12 @@ dd.project-people {
     font-weight: 600;
 }
 
+.project-content a {
+    font-size: 14px;
+    color: #676a6c;
+    font-weight: 600;
+}
+
 .project-list table tr td {
     border-top: none;
     border-bottom: 1px solid #e7eaec;
