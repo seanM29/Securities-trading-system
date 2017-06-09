@@ -27,12 +27,12 @@
                         <h5>账户挂失</h5>
                     </div>
                     <div class="ibox-content">
-                        <form class="form-horizontal m-t" id="lossForm">
+                        <form class="form-horizontal m-t" id="lossForm" target="nm_iframe">
                             
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">身份证号码：</label>
                                 <div class="col-sm-6">
-                                    <input id="id-number" name="id-number" class="form-control required">
+                                    <input id="id-number" name="id-number" class="form-control required" value="112">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -71,6 +71,7 @@
 
     <script src="./static/js/demo/form-validate-demo.js"></script>
 
+    <iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
     
     
 
@@ -80,50 +81,25 @@
 <script src="./static/js/plugins/toastr/toastr.min.js"></script>
 
 <script type="text/javascript">
-    // toastr.options.closeButton = true;
-    // toastr.options.timeOut = 1000;
-    // toastr.error('挂失失败!');
-    // toastr.options.closeButton = true;
-    // toastr.options.timeOut = 1000;
-    // toastr.success('挂失成功!');
-    $(document).ready(function () {
-        $("#lossForm").submit({
-            onFinishing: function (event, currentIndex) {
-                var form = $(this);
-
-                // Disable validation on fields that are disabled.
-                // At this point it's recommended to do an overall check (mean ignoring only disabled fields)
-                form.validate().settings.ignore = ":disabled";
-
-                // Start validation; Prevent form submission if false
-                return form.valid();
-            },
-            onFinished: function (event, currentIndex) {
-                var form = $(this);
-                alert("hello world");
-                form.submit();
-
-
-                // var return_val;
-                // url=window.location+"?info=1";
-                // var request=new XMLHttpRequest();
-                // request.open('GET',url, true);
-                // request.responseType = 'text';
-                // request.onload = function() {return_val=request.response;};
-                // request.send();
-                // var suc = return_val.split(";")[0];
-                // var err_msg = return_val.split(";")[1];
-                // if (suc == '1') {
-                //     toastr.options.closeButton = true;
-                //     toastr.options.timeOut = 1000;
-                //     toastr.success('注册成功!');
-                // } else {
-                //     toastr.options.closeButton = true;
-                //     toastr.options.timeOut = 1000;
-                //     toastr.error('注册失败! '+ err_msg);
-                // }
-            }
-        });
+    $("#lossForm").submit(function(e) {
+        url = window.location+"?info=1";
+        var request = new XMLHttpRequest();
+        request.open('GET',url, true);
+        request.responseType = 'text';
+        request.onload = function() {
+            var return_val = request.response;
+            var suc = return_val.split(";")[0];
+            var err_msg = return_val.split(";")[1];
+            if (suc == '1') {
+                toastr.options.closeButton = true;
+                toastr.options.timeOut = 1000;
+                toastr.success('挂失成功!');
+            } else {
+                toastr.options.closeButton = true;
+                toastr.options.timeOut = 1000;
+                toastr.error('挂失失败! '+ err_msg);
+        }};
+        request.send();
     });
 </script>
 
