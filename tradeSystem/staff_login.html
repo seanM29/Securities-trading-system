@@ -29,30 +29,7 @@
     <meta http-equiv="refresh" content="0;ie.html" />
     <![endif]-->
                                             <script>
-                                                if (window.top !== window.self) {
-            window.top.location = window.location;
-        }
-                                            </script>
-                                            <script type="text/javascript">
-                                                function check(){
-   			var radios = document.getElementsByName('RadioButtonList1');
-    		for(var i = 0 ; i < radios.length ; ++i){
-        		if(radios[i].checked){
-            		return radios[i].value;
-        		}
-    		}
-  
-		}
-		function staff_login(){
-			var staff_type = check();
-
-			if(staff_type=='证券账户管理员'){
-				window.location.href='index.html'
-			}
-			else{
-				window.location.href='index_searchTrade.html'
-			}
-		}
+                                           
                                             </script>
                                         </link>
                                     </link>
@@ -68,7 +45,7 @@
         <div class="signinpanel">
             <div class="row">
                 <div class="col-sm-12">
-                    <form id="staffLoginForm">
+                    <form id="staffLoginForm" target="id_iframe">
                         <h4 class="no-margins">
                             登录：
                         </h4>
@@ -94,10 +71,37 @@
                 </div>
             </div>
         </div>
+
+        <iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
+    
     </body>
 <script src="./static/js/plugins/toastr/toastr.min.js"></script>
 <script type="text/ecmascript" src="./static/js/md5.min.js"></script>
-    <script type="text/javascript">
+<script type="text/javascript">
+        if (window.top !== window.self) {
+            window.top.location = window.location;
+        }
+                                            </script>
+                                            <script type="text/javascript">
+                                                function check(){
+   			var radios = document.getElementsByName('RadioButtonList1');
+    		for(var i = 0 ; i < radios.length ; ++i){
+        		if(radios[i].checked){
+            		return radios[i].value;
+        		}
+    		}
+  
+		}
+		function staff_login(){
+			var staff_type = check();
+
+			if(staff_type=='证券账户管理员'){
+				window.location.href='index.html'
+			}
+			else{
+				window.location.href='index_searchTrade.html'
+			}
+		}
     function encrypt(){
     	var md5PWD = $("#password").val();
     	if(md5PWD.length()!=""){
@@ -108,12 +112,30 @@
         	$("#username").val(md5(md5USE)) ;//不同的md5.js调用的方法可能不同 
  		}
     }
-      function md5PWD(){  
+    function md5PWD(){  
         if($("#password").val()=="默认密码"){  
             return;  
         }  
         var md5PWD = $("#password").val();  
         $("#PWD").val(hex_md5(md5PWD)) ;//不同的md5.js调用的方法可能不同  
-    }  
-    </script>
+    } 
+    $("#staffLoginForm").submit(function(e) {
+        url = window.location+"?info=1";
+        var request = new XMLHttpRequest();
+        request.open('GET',url, true);
+        request.responseType = 'text';
+        request.onload = function() {
+            var return_val = request.response;
+            var suc = return_val.split(";")[0];
+            var err_msg = return_val.split(";")[1];
+            if (suc == '1') {
+               
+            } else {
+                toastr.options.closeButton = true;
+                toastr.options.timeOut = 1000;
+                toastr.error('登录失败 '+ err_msg);
+        }};
+        request.send();
+    }); 
+ </script>
 </html>
