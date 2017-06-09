@@ -38,7 +38,7 @@
                             请使用您从工作人员获得的证券账户，设置密码，并填写个人信息
                         </p>
 
-                        <form id="form" action="" class="wizard-big">
+                        <form id="form" class="wizard-big" target="nm_iframe">
                             <h1>账户</h1>
                             <fieldset>
                                 <h2>账户信息</h2>
@@ -46,15 +46,15 @@
                                     <div class="col-sm-8">
                                         <div class="form-group">
                                             <label>证券账号 *</label>
-                                            <input id="user" name="userid" type="text" class="form-control"> <!-- class="form-control reqNameuired"> -->
+                                            <input id="user" name="userid" type="text" class="form-control required" value="3140102237">
                                         </div>
                                         <div class="form-group">
                                             <label>密码 *</label>
-                                            <input id="password" name="password" type="text" class="form-control"><!--  class="form-control required"> -->
+                                            <input id="password" name="password" type="password" class="form-control required" value="2237">
                                         </div>
                                         <div class="form-group">
                                             <label>确认密码 *</label>
-                                            <input id="confirm" name="confirm-pwd" type="text" class="form-control"><!--  class="form-control required"> -->
+                                            <input id="confirm" name="confirm" type="password" class="form-control required"  value="2237">
                                         </div>
                                     </div>
                                 </div>
@@ -68,7 +68,7 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>姓名 *</label>
-                                            <input id="name" name="name" type="text" class="form-control"> <!-- class="form-control required"> -->
+                                            <input id="name" name="name" type="text" class="form-control required" value="张三">
                                         </div>
                                     </div>
                                     <div class="col-sm-2">
@@ -86,7 +86,7 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>身份证号码 *</label>
-                                            <input id="name" name="id-number" type="text" class="form-control"> <!-- class="form-control required"> -->
+                                            <input id="name" name="id-number" type="text" class="form-control required"  value="336582199706135568"> 
                                         </div>
                                     </div>
                                     
@@ -95,7 +95,7 @@
                                     <div class="col-sm-8">
                                         <div class="form-group">
                                             <label>家庭地址 *</label>
-                                            <input id="name" name="home-address" type="text" class="form-control"> <!-- class="form-control required"> -->
+                                            <input id="name" name="home-address" type="text" class="form-control required" value="杭州市浙大玉泉校区30舍"> 
                                         </div>
                                     </div>
                                 </div>
@@ -104,7 +104,7 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>职业 *</label>
-                                            <input id="name" name="job" type="text" class="form-control"> <!-- class="form-control required"> -->
+                                            <input id="name" name="job" type="text" class="form-control required" value="学生"> 
                                         </div>
                                     </div>
                                     <div class="col-sm-2">
@@ -123,7 +123,7 @@
                                     <div class="col-sm-8">
                                         <div class="form-group">
                                             <label>工作地址 *</label>
-                                            <input id="name" name="work-address" type="text" class="form-control"> <!-- class="form-control required"> -->
+                                            <input id="name" name="work-address" type="text" class="form-control required" value="杭州市浙大玉泉校区30舍">
                                         </div>
                                     </div>
                                 </div>
@@ -132,13 +132,13 @@
                                     <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>手机号 *</label>
-                                            <input id="name" name="mobiephone" type="text" class="form-control"> <!-- class="form-control required"> -->
+                                            <input id="name" name="mobiephone" type="text" class="form-control required" value="17855366974">
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>座机号</label>
-                                            <input id="name" name="telephone" type="text" class="form-control"> <!-- class="form-control required"> -->
+                                            <input id="name" name="telephone" type="text" class="form-control" value="057185632894">
                                         </div>
                                     </div>
                                 </div>
@@ -153,7 +153,7 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>资金账户 1 *</label>
-                                            <input id="name" name="fund-account-1" type="text" class="form-control"> <!-- class="form-control required"> -->
+                                            <input id="name" name="fund-account-1" type="text" class="form-control required" value="3214568">
                                         </div>
                                     </div>
                                 </div>
@@ -161,7 +161,7 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>资金账户 2</label>
-                                            <input id="name" name="fund-account-2" type="text" class="form-control"> <!-- class="form-control required"> -->
+                                            <input id="name" name="fund-account-2" type="text" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -169,7 +169,7 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>资金账户 3</label>
-                                            <input id="name" name="fund-account-3" type="text" class="form-control"> <!-- class="form-control required"> -->
+                                            <input id="name" name="fund-account-3" type="text" class="form-control"> 
                                         </div>
                                     </div>
                                 </div>
@@ -197,6 +197,8 @@
         </div>
     </div>
 
+
+    <iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
     <!-- 全局js -->
     <script src="./static/js/jquery.min.js?v=2.1.4"></script>
     <script src="./static/js/bootstrap.min.js?v=3.3.6"></script>
@@ -250,12 +252,6 @@ background-color: #E7E7E7;
 <script type="text/ecmascript" src="./static/js/md5.min.js"></script>
 
 <script type="text/javascript">
-    // toastr.options.closeButton = true;
-    // toastr.options.timeOut = 1000;
-    // toastr.error('注册失败!');
-    // toastr.options.closeButton = true;
-    // toastr.options.timeOut = 1000;
-    // toastr.success('注册成功!');
     function sleep(d){
         for(var t = Date.now();Date.now() - t <= d;);
     }
@@ -316,12 +312,36 @@ background-color: #E7E7E7;
             },
             onFinished: function (event, currentIndex) {
                 var form = $(this);
-                
+                var pwd = $("#password");
+                var md5_pwd = md5(pwd.val());
+                $("#password").val(md5_pwd);
+                $("#confirm").val(md5_pwd);
+                // var arr = form.serializeArray();
+                // for (var i = 0; i < arr.length; i++)
+                //     console.log(form.serializeArray()[i]);
                 // Submit form input
                 form.submit();
-                
-                console.log(form["password"]);
-                
+
+
+                var return_val;
+                url=window.location+"?info=1";
+                var request=new XMLHttpRequest();
+                request.open('GET',url, true);
+                request.responseType = 'text';
+                request.onload = function() {return_val=request.response;};
+                request.send();
+                var suc = return_val.split(";")[0];
+                var err_msg = return_val.split(";")[1];
+                if (suc == '1') {
+                    toastr.options.closeButton = true;
+                    toastr.options.timeOut = 1000;
+                    toastr.success('注册成功!');
+                } else {
+                    toastr.options.closeButton = true;
+                    toastr.options.timeOut = 1000;
+                    toastr.error('注册失败! '+ err_msg);
+                }
+
             }
         }).validate({
             errorPlacement: function (error, element) {

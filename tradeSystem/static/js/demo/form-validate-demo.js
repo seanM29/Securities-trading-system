@@ -108,6 +108,43 @@
                 
             });
 
+
+            $("#lossForm").validate({
+                rules: {
+                    agree: "required"
+                },
+                messages: {
+                    agree: {
+                        required: icon + "必须同意协议后才能挂失",
+                        element: '#agree-error'
+                    }
+                }
+            });
+
+            $("#renewForm").validate({
+                rules: {
+                    agree: "required"
+                },
+                messages: {
+                    agree: {
+                        required: icon + "必须同意协议后才能重新开户",
+                        element: '#agree-error'
+                    }
+                }
+            });   
+
+            $("#dropForm").validate({
+                rules: {
+                    agree: "required"
+                },
+                messages: {
+                    agree: {
+                        required: icon + "必须同意协议后才能销户",
+                        element: '#agree-error'
+                    }
+                }
+            });          
+
             // propose username by combining first- and lastname
             $("#username").focus(function () {
                 var firstname = $("#firstname").val();
