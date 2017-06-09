@@ -86,6 +86,45 @@
     // toastr.options.closeButton = true;
     // toastr.options.timeOut = 1000;
     // toastr.success('挂失成功!');
+    $(document).ready(function () {
+        $("#lossForm").submit({
+            onFinishing: function (event, currentIndex) {
+                var form = $(this);
+
+                // Disable validation on fields that are disabled.
+                // At this point it's recommended to do an overall check (mean ignoring only disabled fields)
+                form.validate().settings.ignore = ":disabled";
+
+                // Start validation; Prevent form submission if false
+                return form.valid();
+            },
+            onFinished: function (event, currentIndex) {
+                var form = $(this);
+                alert("hello world");
+                form.submit();
+
+
+                // var return_val;
+                // url=window.location+"?info=1";
+                // var request=new XMLHttpRequest();
+                // request.open('GET',url, true);
+                // request.responseType = 'text';
+                // request.onload = function() {return_val=request.response;};
+                // request.send();
+                // var suc = return_val.split(";")[0];
+                // var err_msg = return_val.split(";")[1];
+                // if (suc == '1') {
+                //     toastr.options.closeButton = true;
+                //     toastr.options.timeOut = 1000;
+                //     toastr.success('注册成功!');
+                // } else {
+                //     toastr.options.closeButton = true;
+                //     toastr.options.timeOut = 1000;
+                //     toastr.error('注册失败! '+ err_msg);
+                // }
+            }
+        });
+    });
 </script>
 
 </html>

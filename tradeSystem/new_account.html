@@ -263,43 +263,6 @@ background-color: #E7E7E7;
         $("#wizard").steps();
         $("#form").steps({
             bodyTag: "fieldset",
-            onStepChanging: function (event, currentIndex, newIndex) {
-                // Always allow going backward even if the current step contains invalid fields!
-                if (currentIndex > newIndex) {
-                    return true;
-                }
-
-                // Forbid suppressing "Warning" step if the user is to young
-                if (newIndex === 3 && Number($("#age").val()) < 18) {
-                    return false;
-                }
-
-                var form = $(this);
-
-                // Clean up if user went backward before
-                if (currentIndex < newIndex) {
-                    // To remove error styles
-                    $(".body:eq(" + newIndex + ") label.error", form).remove();
-                    $(".body:eq(" + newIndex + ") .error", form).removeClass("error");
-                }
-
-                // Disable validation on fields that are disabled or hidden.
-                form.validate().settings.ignore = ":disabled,:hidden";
-
-                // Start validation; Prevent going forward if false
-                return form.valid();
-            },
-            onStepChanged: function (event, currentIndex, priorIndex) {
-                // Suppress (skip) "Warning" step if the user is old enough.
-                if (currentIndex === 2 && Number($("#age").val()) >= 18) {
-                    $(this).steps("next");
-                }
-
-                // Suppress (skip) "Warning" step if the user is old enough and wants to the previous step.
-                if (currentIndex === 2 && priorIndex === 3) {
-                    $(this).steps("previous");
-                }
-            },
             onFinishing: function (event, currentIndex) {
                 var form = $(this);
 
@@ -321,26 +284,24 @@ background-color: #E7E7E7;
                 //     console.log(form.serializeArray()[i]);
                 // Submit form input
                 form.submit();
-
-
-                var return_val;
                 url=window.location+"?info=1";
                 var request=new XMLHttpRequest();
                 request.open('GET',url, true);
                 request.responseType = 'text';
-                request.onload = function() {return_val=request.response;};
+                request.onload = function() {
+                    var return_val=request.response;
+                    var suc = return_val.split(";")[0];
+                    var err_msg = return_val.split(";")[1];
+                    if (suc == '1') {
+                        toastr.options.closeButton = true;
+                        toastr.options.timeOut = 1000;
+                        toastr.success('注册成功!');
+                    } else {
+                        toastr.options.closeButton = true;
+                        toastr.options.timeOut = 1000;
+                        toastr.error('注册失败! '+ err_msg);
+                }};
                 request.send();
-                var suc = return_val.split(";")[0];
-                var err_msg = return_val.split(";")[1];
-                if (suc == '1') {
-                    toastr.options.closeButton = true;
-                    toastr.options.timeOut = 1000;
-                    toastr.success('注册成功!');
-                } else {
-                    toastr.options.closeButton = true;
-                    toastr.options.timeOut = 1000;
-                    toastr.error('注册失败! '+ err_msg);
-                }
 
             }
         }).validate({
