@@ -27,7 +27,7 @@
                         <h5>销户</h5>
                     </div>
                     <div class="ibox-content">
-                        <form class="form-horizontal m-t" id="dropForm">
+                        <form class="form-horizontal m-t" id="dropForm" target="nm_iframe">
                             
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">身份证号码：</label>
@@ -58,6 +58,7 @@
         </div>
 
     </div>
+    <iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
 
 
     <!-- 全局js -->
@@ -79,12 +80,26 @@
 </body>
 
 <script type="text/javascript">
-    // toastr.options.closeButton = true;
-    // toastr.options.timeOut = 1000;
-    // toastr.error('销户失败!');
-    // toastr.options.closeButton = true;
-    // toastr.options.timeOut = 1000;
-    // toastr.success('销户成功!');
+    $("#dropForm").submit(function(e) {
+        url = window.location+"?info=1";
+        var request = new XMLHttpRequest();
+        request.open('GET',url, true);
+        request.responseType = 'text';
+        request.onload = function() {
+            var return_val = request.response;
+            var suc = return_val.split(";")[0];
+            var err_msg = return_val.split(";")[1];
+            if (suc == '1') {
+                toastr.options.closeButton = true;
+                toastr.options.timeOut = 1000;
+                toastr.success('销户成功!');
+            } else {
+                toastr.options.closeButton = true;
+                toastr.options.timeOut = 1000;
+                toastr.error('销户失败! '+ err_msg);
+        }};
+        request.send();
+    });
 </script>
 
 </html>
