@@ -102,12 +102,12 @@
     	if(md5PWD!=""){
     		$("#password").val(md5(md5PWD)) ;//不同的md5.js调用的方法可能不同  
         }
-        var md5USE = $("#username").val();
-        userbefore = md5USE;
-        if(md5USE!=""){
-        	var md5USE = $("#username").val();  
-        	$("#username").val(md5(md5USE)) ;//不同的md5.js调用的方法可能不同 
- 		}
+        <!-- var md5USE = $("#username").val(); -->
+        <!-- userbefore = md5USE; -->
+        <!-- if(md5USE!=""){ -->
+        	<!-- var md5USE = $("#username").val();   -->
+        	<!-- $("#username").val(md5(md5USE)) ;//不同的md5.js调用的方法可能不同  -->
+ 		<!-- } -->
     }
     function staff_login(){
 			var staff_type = check();

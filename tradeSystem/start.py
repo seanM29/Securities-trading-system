@@ -5,7 +5,6 @@ app = Flask(__name__)
 state=[]
 @app.route('/',methods=['GET','POST'])
 def index():
-    global msg_dict
     if request.method=="GET":
         if not request.args:
             return render_template("staff_login.html")
@@ -13,7 +12,7 @@ def index():
             user_type=request.args.get("RadioButtonList")
             if user_type==u"证券账户管理员":
             #校验
-                if request.args.get("username")==to_md5("aaa") and request.args.get("password")==to_md5("aaa"):
+                if request.args.get("username")=="aaa" and request.args.get("password")==to_md5("aaa"):
                     return "1;msg:success"
                     #return render_template("index.html")
                 else:
@@ -21,7 +20,7 @@ def index():
                     #return render_template("staff_login.html")
             elif user_type==u"交易系统管理员":
             #校验
-                if request.args.get("username")==to_md5("bbb") and request.args.get("password")==to_md5("bbb"):
+                if request.args.get("username")=="bbb" and request.args.get("password")==to_md5("bbb"):
                     return "1;msg:success"
                     #return render_template("index_searchTrade.html")
                 else:
