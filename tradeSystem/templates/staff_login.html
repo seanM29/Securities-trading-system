@@ -57,16 +57,12 @@
                         <input class="form-control pword m-b" id="password" name="password" placeholder="密码" type="password"/>
                         <table border="0" class="tabpadding" id="RadioButtonList1" width="100%">
                             <td>
-                                <input id="RadioButtonList1_0" name="RadioButtonList1" tabindex="3" type="radio" value="证券账户管理员"/>
-                                <label for="RadioButtonList1_0">
-                                    证券账户管理员
-                                </label>
+                                <input id="RadioButtonList1_0" name="RadioButtonList" tabindex="3" type="radio" value="证券账户管理员"/>证券账户管理员<br />
+                                
                             </td>
                             <td>
-                                <input id="RadioButtonList1_1" name="RadioButtonList1" tabindex="3" type="radio" value="交易系统管理员"/>
-                                <label for="RadioButtonList1_1">
-                                    交易系统管理员
-                                </label>
+                                <input id="RadioButtonList1_1" name="RadioButtonList" tabindex="3" type="radio" value="交易系统管理员"/>交易系统管理员<br />
+                              
                             </td>
                         </table>
                         <input class="btn btn-success btn-block" type="submit" value="登录" onclick="encrypt()" />
@@ -151,6 +147,10 @@
                         required: true,
                        
                     },
+                    RadioButtonList: {
+                        required: true,
+                       
+                    },
                  
                    
                 },
@@ -164,6 +164,14 @@
                         required: icon + "请输入您的密码",
                        
                     },
+                     RadioButtonList: {
+                        required: icon + "请选择您的身份",
+                       
+                    },
+
+                errorPlacement: function (error, element) {
+                error.appendTo(element.parent().parent().parent());
+                },
                    
                 }
         });
