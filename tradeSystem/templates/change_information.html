@@ -11,7 +11,7 @@
     <meta name="keywords" content="">
     <meta name="description" content="">
 
-    <link href="./static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico"> <link href="./static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
     <link href="./static/css/font-awesome.css?v=4.4.0" rel="stylesheet">
     <link href="./static/css/plugins/iCheck/custom.css" rel="stylesheet">
     <link href="./static/css/plugins/steps/jquery.steps.css" rel="stylesheet">
@@ -37,28 +37,7 @@
                        
 
                         <form id="form" action="" class="wizard-big">
-                            <h1>身份验证</h1>
-                             
-                            <fieldset>
-                                <h2>账户信息</h2>
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        
-                                        <div class="form-group">
-                                            <label>密码 *</label>
-                                            <input id="password" name="password" type="text" class="form-control"><!--  class="form-control required"> -->
-                                        </div>
-                                        <div class="form-group">
-                                <div class="col-sm-6 col-sm-offset-33">
-                                    <button class="btn btn-primary" type="submit">点击认证</button>
-                                </div>
-                            </div>
-                                        
-                                        
-                                    </div>
-                                </div>
-
-                            </fieldset>
+                          
 
                             <h1>个人资料</h1>
                             <fieldset class="scroll-bar-1">
@@ -228,49 +207,42 @@ background-color: #E7E7E7;
     }
 
 </script>
+<script type="text/javascript">
+    // toastr.options.closeButton = true;
+    // toastr.options.timeOut = 1000;
+    // toastr.error('登录失败!');
+    // toastr.options.closeButton = true;
+    // toastr.options.timeOut = 1000;
+    // toastr.success('登录成功!');
+    $("#signupForm").submit(function(e) {
+        url = window.location+"?info=1";
+        var request = new XMLHttpRequest();
+        request.open('GET',url, true);
+        request.responseType = 'text';
+        request.onload = function() {
+            var return_val = request.response;
+            var suc = return_val.split(";")[0];
+            var err_msg = return_val.split(";")[1];
+            if (suc == '1') {
+                toastr.options.closeButton = true;
+                toastr.options.timeOut = 1000;
+                toastr.success('验证成功!');
+            } else {
+                toastr.options.closeButton = true;
+                toastr.options.timeOut = 1000;
+                toastr.error('验证失败! '+ err_msg);
+        }};
+        request.send();
+    });
+</script>
+
+
 
 <script type="text/javascript">
     $(document).ready(function () {
         $("#wizard").steps();
         $("#form").steps({
             bodyTag: "fieldset",
-            onStepChanging: function (event, currentIndex, newIndex) {
-                // Always allow going backward even if the current step contains invalid fields!
-                if (currentIndex > newIndex) {
-                    return true;
-                }
-
-                // Forbid suppressing "Warning" step if the user is to young
-                if (newIndex === 3 && Number($("#age").val()) < 18) {
-                    return false;
-                }
-
-                var form = $(this);
-
-                // Clean up if user went backward before
-                if (currentIndex < newIndex) {
-                    // To remove error styles
-                    $(".body:eq(" + newIndex + ") label.error", form).remove();
-                    $(".body:eq(" + newIndex + ") .error", form).removeClass("error");
-                }
-
-                // Disable validation on fields that are disabled or hidden.
-                form.validate().settings.ignore = ":disabled,:hidden";
-
-                // Start validation; Prevent going forward if false
-                return form.valid();
-            },
-            onStepChanged: function (event, currentIndex, priorIndex) {
-                // Suppress (skip) "Warning" step if the user is old enough.
-                if (currentIndex === 2 && Number($("#age").val()) >= 18) {
-                    $(this).steps("next");
-                }
-
-                // Suppress (skip) "Warning" step if the user is old enough and wants to the previous step.
-                if (currentIndex === 2 && priorIndex === 3) {
-                    $(this).steps("previous");
-                }
-            },
             onFinishing: function (event, currentIndex) {
                 var form = $(this);
 
@@ -283,12 +255,34 @@ background-color: #E7E7E7;
             },
             onFinished: function (event, currentIndex) {
                 var form = $(this);
-                
+                var pwd = $("#password");
+                var md5_pwd = md5(pwd.val());
+                $("#password").val(md5_pwd);
+                //$("#confirm").val(md5_pwd);
+                // var arr = form.serializeArray();
+                // for (var i = 0; i < arr.length; i++)
+                //     console.log(form.serializeArray()[i]);
                 // Submit form input
                 form.submit();
-                
-                console.log(form["password"]);
-                
+                url=window.location+"?info=1";
+                var request=new XMLHttpRequest();
+                request.open('GET',url, true);
+                request.responseType = 'text';
+                request.onload = function() {
+                    var return_val=request.response;
+                    var suc = return_val.split(";")[0];
+                    var err_msg = return_val.split(";")[1];
+                    if (suc == '1') {
+                        toastr.options.closeButton = true;
+                        toastr.options.timeOut = 1000;
+                        toastr.success('修改成功!');
+                    } else {
+                        toastr.options.closeButton = true;
+                        toastr.options.timeOut = 1000;
+                        toastr.error('修改失败! '+ err_msg);
+                }};
+                request.send();
+
             }
         }).validate({
             errorPlacement: function (error, element) {
@@ -302,6 +296,7 @@ background-color: #E7E7E7;
         });
     });
 </script>
+
 
 </html>
 

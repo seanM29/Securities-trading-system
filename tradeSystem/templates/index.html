@@ -109,7 +109,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li><a class="J_menuItem" onclick="user_logout()">
+                    <li><a class="J_menuItem" onclick="user_logout()" href="signout">
                             <i class="fa fa-sign-in" aria-hidden="true"></i>
                             <span class="nav-label">账户登出</span>
                         </a>
@@ -124,7 +124,7 @@
                     </li>
                     
                     <!-- 工作人员注销 -->
-                    <li><a class="J_menuItem" href="#">
+                    <li><a class="J_menuItem" href="staff_login.html">
                             <i class="fa fa-sign-out" aria-hidden="true"></i>
                             <span class="nav-label">注销</span>
                         </a>
@@ -181,13 +181,21 @@
     toastr.options.closeButton = true;
     toastr.options.timeOut = 1000;
     toastr.info('您好，亲爱的管理员');
-
-
     function user_logout() {
         toastr.options.closeButton = true;
         toastr.options.timeOut = 1000;
         toastr.info('登出');
     }
+
+    window.onbeforeunload=function(){
+	//必须使用beforeunload
+         var url =window.location+"?close=1";
+          $.ajax({
+              url:url,
+              async:false                //必须采用同步方法
+          });
+		 
+      }
 </script>
 
 </html>
