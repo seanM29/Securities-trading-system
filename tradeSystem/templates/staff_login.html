@@ -27,8 +27,7 @@
                                             </script>
                                             <script src="./static/js/plugins/validate/messages_zh.min.js">
                                             </script>
-                                            <script src="./static/js/demo/form-validate-demo.js">
-                                            </script>
+                                           
                                             <!--[if lt IE 9]>
     <meta http-equiv="refresh" content="0;ie.html" />
     <![endif]-->
@@ -168,12 +167,26 @@
                         required: icon + "请选择您的身份",
                        
                     },
-
-                errorPlacement: function (error, element) {
-                error.appendTo(element.parent().parent().parent());
                 },
-                   
+                  errorPlacement: function (error, element) {
+                    if (element.is(":radio") || element.is(":checkbox")) {
+                        error.appendTo(element.parent().parent().parent());
+                    } else {
+                        error.appendTo(element.parent());
+                    }
+                },
+            
+          
+            errorPlacement: function (error, element) {
+                if (element.is(":radio") || element.is(":checkbox")) {
+                    error.appendTo(element.parent().parent().parent());
+                } else {
+                    error.appendTo(element.parent());
                 }
+            },
+           
+            validClass: "help-block m-b-none",
+            
         });
     });
  </script>
