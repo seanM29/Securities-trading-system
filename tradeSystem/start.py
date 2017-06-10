@@ -43,10 +43,10 @@ def page(x):
     if request.method=="GET":
         if not request.args:
             if ip not in state:
-                if x in ["index.html","index_searchTrade.html","new_account.html","user_login.html"]:
+                if x in ["index.html", "index_v1.html", "index_searchTrade.html","new_account.html","user_login.html"]:
                     return render_template(x)
                 else:
-                    return render_template("500.html")
+                    return render_template("no_login.html")
             return render_template(x)
         else:
             # if request.args.get("info"):
