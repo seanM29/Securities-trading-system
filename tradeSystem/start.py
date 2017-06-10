@@ -1,5 +1,6 @@
 #encoding=utf8
 from flask import Flask,render_template,request,jsonify
+import hashlib
 app = Flask(__name__)
 state=[]
 @app.route('/',methods=['GET','POST'])
@@ -9,10 +10,10 @@ def index():
         if not request.args:
             return render_template("staff_login.html")
         else:
-            user_type=request.args.get("RadioButtonList1")
+            user_type=request.args.get("RadioButtonList")
             if user_type==u"证券账户管理员":
             #校验
-                if request.args.get("username")=="aaa" and request.args.get("password")=="aaa":
+                if request.args.get("username")==to_md5("aaa") and request.args.get("password")==to_md5("aaa"):
                     return "1;msg:success"
                     #return render_template("index.html")
                 else:
@@ -20,7 +21,7 @@ def index():
                     #return render_template("staff_login.html")
             elif user_type==u"交易系统管理员":
             #校验
-                if request.args.get("username")=="bbb" and request.args.get("password")=="bbb":
+                if request.args.get("username")==to_md5("bbb") and request.args.get("password")==to_md5("bbb"):
                     return "1;msg:success"
                     #return render_template("index_searchTrade.html")
                 else:
@@ -69,7 +70,11 @@ def page(x):
 # @app.route('/index_v1.html',methods=['GET','POST'])
 # def index_v1():
 
-
+def to_md5(name):
+    id = hashlib.md5()
+    id.update(name.encode("utf-8"))
+    id = id.hexdigest()
+    return id
 
 if __name__ == '__main__':
     app.run(debug=True,threaded=True)
