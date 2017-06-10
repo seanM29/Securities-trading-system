@@ -1,0 +1,45 @@
+
+## Tables
+
+table StockUser{
+	id,		varchar(10)	as primary key not null	// 10-digit number
+	available,		integer	// report of loss
+	password,		varchar(32) not null	// md5 with salt
+
+	crate_time,		timestamp
+
+	name,		varchar(64) not null
+	sex,		integer	// male/female/...
+	id_number,		varchar(18)
+	mobilephone,		varchar(20)	//	digits
+	telephone,		varchar(20)	// digits
+	home_address,		varchar(256)
+	degree,		integer	// primary/junior/senior/bachelor/...
+	job,		varchar(64)
+	work_address,		varchar(256)
+}
+
+table StockUserFund{
+	id,		varchar(10) references StockUser	// 10-digit number
+	fund_id,		varchar(20)	// ???
+
+	primary key (id, fund_id)
+}
+
+table Stocks{
+	id,		varchar(10) references StockUser
+	stock_id,		integer	// [0, 999999]
+
+	own,		integer
+	frozen,		integer
+
+	primary key (id, stock_id)
+}
+
+table StockManager{
+	id,		varchar(10) as primary key not null	// 10-digit number
+	password,		varchar(32) not null	// md5 with salt
+	type,	varchar(256)
+
+	name,		varchar(64) not null
+}
