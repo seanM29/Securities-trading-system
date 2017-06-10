@@ -84,7 +84,7 @@
         var icon = "<i class='fa fa-times-circle'></i> ";
         $("#loginForm").validate({
             submitHandler: function(form){
-                var form = $(this);
+                //var form = $(this);
                 var pwd = $("#password");
                 var md5_pwd = md5(pwd.val());
                 $("#password").val(md5_pwd);

@@ -52,7 +52,7 @@ def page(x):
             # if request.args.get("info"):
             #     return msg_dict[x]
             #校验
-            if request.args.get("username")=="aaa" and request.args.get("password")=="aaa":
+            if request.args.get("username")=="aaa" and request.args.get("password")==to_md5("aaa"):
                 #msg_dict[x] = "1;msg:success"
                 if ip not in state:
                     state.append(ip)
