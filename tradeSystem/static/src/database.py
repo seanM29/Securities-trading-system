@@ -5,6 +5,7 @@ import sqlite3
 DB_NAME = '../../tradeSystem.db'
 CONN = sqlite3.connect(DB_NAME, isolation_level=None)
 cur = CONN.cursor()
+cur.execute("PRAGMA foreign_keys = ON;")
 
 ###
 #	about stock users
@@ -238,9 +239,9 @@ def getStockUser(id):
 		ret['error'] = fund
 		return ret
 
-	info['fund'] = fund
+	res['fund'] = fund
 	ret['status'] = True
-	ret['result'] = info
+	ret['result'] = res
 	return ret
 
 ###
@@ -473,16 +474,17 @@ def test1():
 	t = {
 		'id': '0123456789',
 		'password': '01cd2d699991ea786acf871aa39646dd',
-		'sex': 20
+		'sex': 1
 	}
 	print addStockUser(t['id'], t)
 
 
 def test2():
 	print addFundAccount('0123456789', 223489)
+	print addFundAccount('0123456789', 2234839)
 
 if __name__ == "__main__":
-	init()
+#	init()
 	test1()
 	test2()
 
@@ -491,6 +493,7 @@ if __name__ == "__main__":
 	cur.execute("SELECT * FROM StockUserFund")
 	print cur.fetchall()
 
+	print getStockUser('0123456789')
 	print sqlite3.sqlite_version
 
 	delStockUser('0123456789')
@@ -498,3 +501,4 @@ if __name__ == "__main__":
 	print cur.fetchall()
 	cur.execute("SELECT * FROM StockUserFund")
 	print cur.fetchall()
+
