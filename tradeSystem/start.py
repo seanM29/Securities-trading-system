@@ -1,30 +1,69 @@
 #encoding=utf8
 from flask import Flask,render_template,request,jsonify
 app = Flask(__name__)
-
+state=[]
 @app.route('/',methods=['GET','POST'])
 def index():
+    global msg_dict
     if request.method=="GET":
-        print request.args.get("RadioButtonList1")
         if not request.args:
             return render_template("staff_login.html")
-        elif request.args.get("RadioButtonList1")==u"证券账户管理员":
-            return render_template("index.html")
         else:
-            return render_template("index_searchTrade.html")
+            user_type=request.args.get("RadioButtonList1")
+            if user_type==u"证券账户管理员":
+            #校验
+                if request.args.get("username")=="aaa" and request.args.get("password")=="aaa":
+                    return "1;msg:success"
+                    #return render_template("index.html")
+                else:
+                    return "0;msg:error"
+                    #return render_template("staff_login.html")
+            elif user_type==u"交易系统管理员":
+            #校验
+                if request.args.get("username")=="bbb" and request.args.get("password")=="bbb":
+                    return "1;msg:success"
+                    #return render_template("index_searchTrade.html")
+                else:
+                    return"0;msg:error"
+                    #return render_template("staff_login.html")
+           #render_template("staff_login.html")#前端保证
+
+
 
 
 @app.route('/<x>',methods=['GET','POST'])
 def page(x):
+    ip = request.remote_addr
+    if x=="signout":
+        if ip in state:
+            state.remove(ip)
+        return render_template("user_login.html")
+    global state
+
     if request.method=="GET":
         if not request.args:
+            if ip not in state:
+                if x in ["index.html","index_searchTrade.html","new_account.html","user_login.html"]:
+                    return render_template(x)
+                else:
+                    return render_template("500.html")
             return render_template(x)
         else:
-            if request.args.get("info"):
+            # if request.args.get("info"):
+            #     return msg_dict[x]
+            #校验
+            if request.args.get("username")=="aaa" and request.args.get("password")=="aaa":
+                #msg_dict[x] = "1;msg:success"
+                if ip not in state:
+                    state.append(ip)
+                return "1;msg:success"
+            elif request.args.get("username") and request.args.get("password"):
                 return "0;msg:error"
+                #msg_dict[x] = "0;msg:error"
             return render_template(x)#back=jsonify(request.args))#jsonify(request.args)
     elif request.method == "POST":
         # return request.form.items().__str__()
+        #
         return jsonify(request.form)#render_template(x)#back=jsonify(request.form))
 
 # @app.route('/index_v1.html',methods=['GET','POST'])
