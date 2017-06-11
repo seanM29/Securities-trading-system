@@ -54,7 +54,6 @@ def __insertStockUser(id, info):
 		del info['create_time']
 
 	s = __dictToListStockUser(info)
-	print ','.join(s)
 	try:
 		cur.execute("INSERT INTO Stockuser VALUES (%s)" %(','.join(s)))
 	except Exception as e:
@@ -71,8 +70,6 @@ def __updateStockUser(id, info):
 		return 'Invalid stock user id'
 	if 'id' in info:
 		del info['id']
-	if 'available' in info:
-		del info['available']
 	if 'create_time' in info:
 		del info['create_time']
 
@@ -80,7 +77,7 @@ def __updateStockUser(id, info):
 	sx = ""
 	i = 0
 	for attr in __attrListStockUser:
-		if s[i]:
+		if attr in info:
 			sx += attr + ' = ' + s[i] + ', '
 		i += 1
 	if len(sx) > 0:
@@ -131,7 +128,6 @@ def __insertFundAccount(id, fund_id):
 	try:
 		cur.execute("INSERT INTO StockUserFund VALUES (\"%s\", \"%s\")" %(id, fund_id))
 	except Exception as e:
-		print e
 		return str(e)
 	else:
 		return None
@@ -240,9 +236,18 @@ def updStockUser(id, info):
 	ret['status'] = True
 	return ret
 
-# brief:	get stock user info by id
-# return:	{'status', 'error', 'result'}
 def getStockUser(id):
+	"""Get the infomation of a stock user
+
+	Args:
+		id: id of the stock user
+	
+	Return:
+		A dict mapping keys include:
+		'status': True or False. The result of operation.
+		'error': Error message when 'status'=False
+		'result': user info
+	"""
 	ret = {'status': False, 'error': None, 'result': None}
 
 	res = __queryStockUser(id)
@@ -260,9 +265,18 @@ def getStockUser(id):
 	ret['result'] = res
 	return ret
 
-#	login check
-#	return:	{'status', 'error'}
 def loginStockUser(id, password):
+	"""Login into the system
+
+	Args:
+		id: id of the stock user
+		password: user password
+	
+	Return:
+		A dict mapping keys include:
+		'status': True or False. The result of operation.
+		'error': Error message when 'status'=False
+	"""
 	ret = getStockUser(id)
 	if not ret['status']:
 		return ret
@@ -276,10 +290,17 @@ def loginStockUser(id, password):
 
 	return ret
 
-###
-#	delete stock account
-#	return:	{'status', 'error'}
 def delStockUser(id):
+	"""Delete stock user
+
+	Args:
+		id: id of the stock user
+	
+	Return:
+		A dict mapping keys include:
+		'status': True or False. The result of operation.
+		'error': Error message when 'status'=False
+	"""
 	ret = {'status': False, 'error': None}
 
 	res = __deleteStockUser(id)
@@ -290,10 +311,17 @@ def delStockUser(id):
 	ret['status'] = True
 	return ret
 
-###
-#	froze stock account
-#	return:	{'status', 'error'}
 def frozeStockUser(id):
+	"""Froze a stock user
+
+	Args:
+		id: id of the stock user
+	
+	Return:
+		A dict mapping keys include:
+		'status': True or False. The result of operation.
+		'error': Error message when 'status'=False
+	"""
 	ret = {'status': False, 'error': None}
 
 	res = __queryStockUser(id)
@@ -301,7 +329,7 @@ def frozeStockUser(id):
 		ret['error'] = res
 		return ret
 
-	if not res['available']:
+	if res['available'] == 0:
 		ret['error'] = 'Stock user is already frozen'
 		return ret
 
@@ -309,10 +337,17 @@ def frozeStockUser(id):
 	ret['status'] = True
 	return ret
 
-###
-#	unfroze stock account
-#	return:	{'status', 'error'}
 def unfrozeStockUser(id):
+	"""Unfroze a stock user
+
+	Args:
+		id: id of the stock user
+	
+	Return:
+		A dict mapping keys include:
+		'status': True or False. The result of operation.
+		'error': Error message when 'status'=False
+	"""
 	ret = {'status': False, 'error': None}
 
 	res = __queryStockUser(id)
@@ -320,7 +355,7 @@ def unfrozeStockUser(id):
 		ret['error'] = res
 		return ret
 
-	if not res['available']:
+	if res['available'] == 1:
 		ret['error'] = 'Stock user is not frozen'
 		return ret
 
@@ -328,10 +363,18 @@ def unfrozeStockUser(id):
 	ret['status'] = True
 	return ret
 
-###
-#	add fund account
-#	return:	{'status', 'error'}
 def addFundAccount(id, fund_id):
+	"""Add a fund account to a stock user
+
+	Args:
+		id: id of the stock user
+		fund_id: if of a fund account
+	
+	Return:
+		A dict mapping keys include:
+		'status': True or False. The result of operation.
+		'error': Error message when 'status'=False
+	"""
 	ret = {'status': False, 'error': None}
 
 	res = __insertFundAccount(id, fund_id)
@@ -342,10 +385,18 @@ def addFundAccount(id, fund_id):
 	ret['status'] = True
 	return ret
 
-###
-#	get fund accounts
-#	return:	{'status', 'error', 'result'}
-def getFundAccount(id, fund_id):
+def getFundAccount(id):
+	"""Get fund accounts of a stock user
+
+	Args:
+		id: id of the stock user
+	
+	Return:
+		A dict mapping keys include:
+		'status': True or False. The result of operation.
+		'error': Error message when 'status'=False
+		'result': fund accounts of a stock user
+	"""
 	ret = {'status': False, 'error': None, 'result': None}
 
 	res = __queryFundAccount(id)
@@ -357,10 +408,18 @@ def getFundAccount(id, fund_id):
 	ret['result'] = res
 	return ret
 
-###
-#	delete fund account
-#	return:	{'status', 'error'}
 def delFundAccount(id, fund_id):
+	"""Delete a fund account
+
+	Args:
+		id: id of the stock user
+		fund_id: if of the fund account
+	
+	Return:
+		A dict mapping keys include:
+		'status': True or False. The result of operation.
+		'error': Error message when 'status'=False
+	"""
 	ret = {'status': False, 'error': None}
 
 	res = __deleteFundAccount(id, fund_id)
@@ -371,10 +430,18 @@ def delFundAccount(id, fund_id):
 	ret['status'] = True
 	return ret
 
-###
-#	login check
-#	return:	{'status', 'error'}
 def loginStockUserManager(id, password):
+	"""Login into the system as a user manager
+
+	Args:
+		id: id of the user manager
+		password: password of the manager
+	
+	Return:
+		A dict mapping keys include:
+		'status': True or False. The result of operation.
+		'error': Error message when 'status'=False
+	"""
 	ret = {'status': False, 'error': None}
 
 	res = __queryStockUserManager(id)
@@ -388,10 +455,18 @@ def loginStockUserManager(id, password):
 	ret['status'] = True
 	return ret
 
-###
-#	login check
-#	return:	{'status', 'error'}
 def loginStockQueryManager(id, password):
+	"""Login into the system as a query manager
+
+	Args:
+		id: id of the query manager
+		password: password of the manager
+	
+	Return:
+		A dict mapping keys include:
+		'status': True or False. The result of operation.
+		'error': Error message when 'status'=False
+	"""
 	ret = {'status': False, 'error': None}
 	res = __queryStockQueryManager(id)
 
@@ -408,6 +483,8 @@ def loginStockQueryManager(id, password):
 ###
 #	initialization
 def init():
+	"""Initialize database tables
+	"""
 	cur = CONN.cursor()
 
 	cur.execute('''
@@ -425,7 +502,8 @@ def init():
 			name nvarchar(64),
 			sex integer
 				CHECK (sex BETWEEN 0 AND 1),
-			id_number char(18),
+			id_number char(18)
+				UNIQUE,
 			mobilephone varchar(20),
 			telephone varchar(20),
 			home_address nvarchar(256),
@@ -456,15 +534,18 @@ def init():
 			stock_id integer
 				CHECK (stock_id BETWEEN 0 AND 999999),
 
-			own integer NOT NULL,
-			frozen integer NOT NULL,
+			own integer
+				NOT NULL,
+			frozen integer
+				NOT NULL,
 
 			PRIMARY KEY (id, stock_id)
 		);''')
 	cur.execute('''
 		CREATE TABLE StockUserManager(
 			id char(10),
-			password char(32) NOT NULL,
+			password char(32)
+				NOT NULL,
 
 			name nvarchar(64),
 
@@ -473,16 +554,14 @@ def init():
 	cur.execute('''
 		CREATE TABLE StockQueryManager(
 			id char(10),
-			password char(32) NOT NULL,
+			password char(32)
+				NOT NULL,
 
 			type nvarchar(256),
 			name nvarchar(64),
 
 			PRIMARY KEY (id)
 		);''')
-
-def testUser():
-	user = {}
 
 def test1():
 	t = {
@@ -492,17 +571,16 @@ def test1():
 	}
 	print addStockUser(t['id'], t)
 
-
 def test2():
 	print addFundAccount('0123456789', 223489)
 	print addFundAccount('0123456789', 2234839)
 	print getStockUser('0123456789')
 
-if __name__ == "__main__":
-#	init()
-	test1()
-	test2()
+def test3():
+	print frozeStockUser('0123456789')
+	print frozeStockUser('0123456789')
 
+def testend():
 	cur.execute("SELECT * FROM StockUser")
 	print cur.fetchone()
 	cur.execute("SELECT * FROM StockUserFund")
@@ -515,4 +593,12 @@ if __name__ == "__main__":
 	print cur.fetchall()
 	cur.execute("SELECT * FROM StockUserFund")
 	print cur.fetchall()
+
+if __name__ == "__main__":
+#	init()
+	test1()
+	test2()
+	test3()
+	testend()
+
 
