@@ -81,8 +81,8 @@ def change_capital_account():
     capital_account={}
     if ip in state:
         if request.method == "GET":
-            if request.form.get("form"):
-                if request.form.get("form") != capital_account:
+            if request.args.get("account1"):
+                if request.args.get("account1") != capital_account:
                     return "1;msg:success"
                 else:
                     return "0;msg:error"
@@ -164,7 +164,7 @@ def loss_account():
 
 def new_account():
     if request.method == "GET":
-        if request.args.get("password") and request.args.get("confirm"):#todo 验证
+        if request.args.get("password") and request.args.get("confirm"):
             if request.args.get("password") != to_md5("aaa") and request.args.get("confirm") != to_md5("aaa"):
                 return "1;msg:success"
             else:
