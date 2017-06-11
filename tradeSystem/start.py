@@ -59,7 +59,11 @@ def change_password():
                     if ret["result"]["password"]==request.args.get("password"):
                         return "0;Same password"
                     else:
-                        return "1;%s" % ret["error"]
+                        ret_ret = updStockUser(id,{"password": request.args.get("password")})
+                        if ret_ret["status"]:
+                            return "1;%s" % ret_ret["error"]
+                        else:
+                            return "0;%s" % ret_ret["error"]
                 else:
                     return "0;%s" % ret["error"]
             else:
