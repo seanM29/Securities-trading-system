@@ -604,8 +604,8 @@ def testend():
 
 if __name__ == "__main__":
 	init()
-	test1()
-	test2()
-	test3()
-	testend()
+	# test1()
+	# test2()
+	# test3()
+	# testend()
 
