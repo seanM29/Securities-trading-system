@@ -608,9 +608,8 @@ def testend():
 	print cur.fetchall()
 
 if __name__ == "__main__":
-#	init()
-	test1()
-	test2()
-	test3()
-	testend()
-
+	init()
+	# test1()
+	# test2()
+	# test3()
+	# testend()
