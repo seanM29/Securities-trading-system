@@ -153,7 +153,7 @@ def __deleteFundAccount(id, fund_id):
 	fund_id = str(fund_id)
 	if not __checkid(id):
 		return "Invalid stock user id"
-	if not __checkid(fun_id):
+	if not __checkid(fund_id):
 		return "Invalid fund id"
 
 	try:
@@ -196,8 +196,6 @@ def __queryStockQueryManager(id):
 
 ################################################################################
 
-# brief:	add stock account
-# return:	{'status', 'error'}
 def addStockUser(id, info):
 	"""Add a stock user
 
@@ -220,9 +218,18 @@ def addStockUser(id, info):
 	ret['status'] = True
 	return ret
 
-# brief:	update stock user info
-# return:	{'status', 'error'}
 def updStockUser(id, info):
+	"""Update the infomation of a stock user
+
+	Args:
+		id: id of the stock user
+		info: infomation need to be updated
+	
+	Return:
+		A dict mapping keys include:
+		'status': True or False. The result of operation.
+		'error': Error message when 'status'=False
+	"""
 	ret = {'status': False, 'error': None}
 
 	res = __updateStockUser(id, info)
@@ -260,8 +267,8 @@ def loginStockUser(id, password):
 	if not ret['status']:
 		return ret
 
-	same = res['result']['password'] != password
-	del res['result']
+	same = ret['result']['password'] != password
+	del ret['result']
 	if not same:
 		ret['status'] = False
 		ret['error'] = 'Incorrect password'
