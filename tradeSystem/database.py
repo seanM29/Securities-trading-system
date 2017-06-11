@@ -1,9 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import sqlite3
-
+import hashlib
+def to_md5(name):
+    id = hashlib.md5()
+    id.update(name.encode("utf-8"))
+    id = id.hexdigest()
+    return id
 DB_NAME = 'tradeSystem.db'
-CONN = sqlite3.connect(DB_NAME, isolation_level=None)
+CONN = sqlite3.connect(DB_NAME, isolation_level=None, check_same_thread=False)
 cur = CONN.cursor()
 cur.execute("PRAGMA foreign_keys = ON;")
 
@@ -54,7 +59,7 @@ def __insertStockUser(id, info):
 		del info['create_time']
 
 	s = __dictToListStockUser(info)
-	print ','.join(s)
+	#print ','.join(s)
 	try:
 		cur.execute("INSERT INTO Stockuser VALUES (%s)" %(','.join(s)))
 	except Exception as e:
@@ -267,7 +272,7 @@ def loginStockUser(id, password):
 	if not ret['status']:
 		return ret
 
-	same = ret['result']['password'] != password
+	same = ret['result']['password'] == password
 	del ret['result']
 	if not same:
 		ret['status'] = False
@@ -480,6 +485,9 @@ def init():
 
 			PRIMARY KEY (id)
 		);''')
+	pas=to_md5("123456")
+	cur.execute("insert into StockUserManager values('3140103312','%s','')"%pas)
+	cur.execute("insert into StockQueryManager values('3140103312','%s','','')" % pas)
 
 def testUser():
 	user = {}
@@ -498,11 +506,8 @@ def test2():
 	print addFundAccount('0123456789', 2234839)
 	print getStockUser('0123456789')
 
-if __name__ == "__main__":
-#	init()
-	test1()
-	test2()
 
+def test3():
 	cur.execute("SELECT * FROM StockUser")
 	print cur.fetchone()
 	cur.execute("SELECT * FROM StockUserFund")
@@ -515,4 +520,11 @@ if __name__ == "__main__":
 	print cur.fetchall()
 	cur.execute("SELECT * FROM StockUserFund")
 	print cur.fetchall()
+
+if __name__ == "__main__":
+	init()
+	#test1()
+	#test2()
+
+
 
