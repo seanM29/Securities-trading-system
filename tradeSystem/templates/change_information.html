@@ -110,7 +110,7 @@
                                     <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>手机号 *</label>
-                                            <input id="name" name="mobliephone" type="text" class="form-control"> <!-- class="form-control required"> -->
+                                            <input id="name" name="mobilephone" type="text" class="form-control"> <!-- class="form-control required"> -->
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
@@ -120,11 +120,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                <div class="col-sm-6 col-sm-offset-33">
-                                    <button class="btn btn-primary" type="submit">确定修改</button>
-                                </div>
-                            </div>
+                                <!-- <div class="form-group"> -->
+                                <!-- <div class="col-sm-6 col-sm-offset-33"> -->
+                                    <!-- <button class="btn btn-primary" type="submit">确定修改</button> -->
+                                <!-- </div> -->
+                            <!-- </div> -->
 
 
                             </fieldset>
@@ -194,7 +194,7 @@ background-color: #E7E7E7;
 
 <script src="./static/js/plugins/toastr/toastr.min.js"></script>
 <script type="text/ecmascript" src="./static/js/md5.min.js"></script>
-
+<script src="./static/js/jquery.form.js"></script>
 <script type="text/javascript">
     // toastr.options.closeButton = true;
     // toastr.options.timeOut = 1000;
@@ -202,14 +202,7 @@ background-color: #E7E7E7;
     // toastr.options.closeButton = true;
     // toastr.options.timeOut = 1000;
     // toastr.success('验证成功!');
-	var info={{form|tojson}};
-	alert(info);
-	var information=eval('(' + info + ')');
-	var keys=information.Keys().toArray();
-	for(var i=0;i<keys.length;i++)
-	{	
-		document.getElementByName(keys[i]).value=information[keys[i]];
-	}
+	
     function sleep(d){
         for(var t = Date.now();Date.now() - t <= d;);
     }
@@ -218,6 +211,7 @@ background-color: #E7E7E7;
 
 <script type="text/javascript">
     $(document).ready(function () {
+		
         $("#wizard").steps();
         $("#form").steps({
             bodyTag: "fieldset",
@@ -256,6 +250,15 @@ background-color: #E7E7E7;
             rules: {
             }
         });
+		
+		var info={{form|tojson}};
+		//info.replace("h","'")
+		//alert(info);
+		var information=eval('(' + info + ')');
+		for(var key in information)
+		{	
+		$("[name='"+key+"']").val(information[key]);
+	}
     });
 </script>
 

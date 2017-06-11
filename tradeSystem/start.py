@@ -1,6 +1,7 @@
 #encoding=utf8
-from flask import Flask,render_template,request,jsonify
+from flask import Flask,render_template,request#,jsonify
 from database import *
+import json
 import hashlib
 app = Flask(__name__)
 state=[]
@@ -70,16 +71,39 @@ def change_information():
     global state
     global user_mapping
     ip = request.remote_addr
-    information={"name":"name"}
     if ip in state:
+        id = user_mapping[ip]
+        ret = getStockUser(id)
+        info=ret["result"]
+        info.pop("available")
+        info.pop("fund")
+        info.pop("create_time")
+        info.pop("id")
+        info.pop("password")
+        # for x in info:
+        #     if info[x]==None:
+        #         info[x]=""
+        #info={"name":"受到激发了"}
         if request.method == "GET":
-            if request.form.get("form"):
-                if request.form.get("form")!=information:
-                    return "1;msg:success"
+            if ret["status"]:
+                return render_template("change_information.html",form=json.dumps(info))
+        elif request.method=="POST":
+            form=request.form.to_dict()
+            if form:
+                form["sex"]=int(form["sex"])
+                form["degree"]=int(form["degree"])
+                print form
+                print info
+                if form!=info:
+                    ret_ret=updStockUser(id,form)
+                    if ret_ret["status"]:
+                        return "1;%s"%ret_ret["error"]
+                    else:
+                        return "0;%s"%ret_ret["error"]
                 else:
-                    return "0;msg:error"
+                    return "0;Same information"
             else:
-                return render_template("change_information.html",form=information)
+                return render_template("change_information.html", form=json.dumps(info))
     else:
         return render_template("no_login.html")
 
@@ -87,16 +111,35 @@ def change_capital_account():
     global state
     global user_mapping
     ip = request.remote_addr
-    capital_account={}
+
     if ip in state:
-        if request.method == "GET":
-            if request.args.get("account1"):
-                if request.args.get("account1") != capital_account:
-                    return "1;msg:success"
+        id=user_mapping[ip]
+        ret=getFundAccount(id)
+        if ret["status"]:
+            capital_account =[x["fund_id"] for x in ret["result"]]
+            if request.method == "GET":
+                account=[]
+                if request.args.get("account1"):
+                    account.append(request.args.get("account1"))
+                    if request.args.get("account2"):
+                        account.append(request.args.get("account2"))
+                    if request.args.get("account3"):
+                        account.append(request.args.get("account3"))
+                    if account != capital_account:
+                        add=[x for x in account if x not in capital_account]
+                        de=[x for x in capital_account if x not in account]
+                        print add,de
+                        ret_add=[addFundAccount(id,x)["status"] for x in add]
+                        ret_de=[delFundAccount(id,x)["status"] for x in de]
+                        print ret_add,ret_de
+                        if False not in  ret_de and False not in ret_add:
+                            return "1;msg:success"
+                        else:
+                            return "0;msg:error"
+                    else:
+                        return "0;Same account"
                 else:
-                    return "0;msg:error"
-            else:
-                return render_template("change_capital_account.html", form=capital_account)
+                    return render_template("change_capital_account.html", form=json.dumps(capital_account))
     else:
         return render_template("no_login.html")
 
@@ -196,12 +239,28 @@ def new_account():
     elif request.method=="POST":
         form=request.form.to_dict()
         if form:
+            form["sex"] = int(form["sex"])
+            form["degree"] = int(form["degree"])
             ret=addStockUser(form['id'],form)
             if ret["status"]:
+                if form.get("account1"):
+                    ret1=addFundAccount(form['id'],form.get("account1"))
+                    if not ret1["status"]:
+                        return "0;%s"%ret1["error"]
+                if form.get("account2"):
+                    ret1=addFundAccount(form['id'],form.get("account2"))
+                    if not ret1["status"]:
+                        return "0;%s"%ret1["error"]
+                if form.get("account3"):
+                    ret1=addFundAccount(form['id'],form.get("account3"))
+                    if not ret1["status"]:
+                        return "0;%s"%ret1["error"]
                 return "1;%s" % ret["error"]
                 # return render_template("index.html")
             else:
                 return "0;%s" % ret["error"]
+
+
         else:
             return render_template("new_account.html")
 
