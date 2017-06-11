@@ -1,5 +1,6 @@
 #encoding=utf8
 from flask import Flask,render_template,request,jsonify
+from database import *
 import hashlib
 app = Flask(__name__)
 state=[]
@@ -13,19 +14,22 @@ def staff_login():
             user_type=request.args.get("RadioButtonList")
             if user_type==u"证券账户管理员":
             #校验
-                if request.args.get("username")=="aaa" and request.args.get("password")==to_md5("aaa"):
-                    return "1;msg:success"
+                ret=loginStockUserManager(request.args.get("username"),request.args.get("password"))
+                if ret["status"]:
+                    return "1;%s"%ret["error"]
                     #return render_template("index.html")
                 else:
-                    return "0;msg:error"
+                    return "0;%s"%ret["error"]
                     #return render_template("staff_login.html")
             elif user_type==u"交易系统管理员":
-            #校验
-                if request.args.get("username")=="bbb" and request.args.get("password")==to_md5("bbb"):
-                    return "1;msg:success"
-                    #return render_template("index_searchTrade.html")
+                ret = loginStockQueryManager(request.args.get("username"), request.args.get("password"))
+                if ret["status"]:
+                    return "1;%s"%ret["error"]
+                    # return render_template("index.html")
                 else:
-                    return"0;msg:error"
+                    return "0;%s"%ret["error"]
+            #校验
+
                     #return render_template("staff_login.html")
            #render_template("staff_login.html")#前端保证
 # elif request.method == "POST":
@@ -47,11 +51,16 @@ def change_password():
     ip = request.remote_addr
     if ip in state:
         if request.method == "GET":
-            if request.args.get("password") and request.args.get("confirm"):
-                if request.args.get("password") != to_md5("aaa") and request.args.get("confirm") != to_md5("aaa"):
-                    return "1;msg:success"
+            if request.args.get("password"):
+                id = user_mapping[ip]
+                ret=getStockUser(id)
+                if ret['status']:
+                    if ret["result"]["password"]==request.args.get("password"):
+                        return "0;Same password"
+                    else:
+                        return "1;%s" % ret["error"]
                 else:
-                    return "0;msg:error"
+                    return "0;%s" % ret["error"]
             else:
                 return render_template("change_password.html")
     else:
@@ -91,37 +100,47 @@ def change_capital_account():
     else:
         return render_template("no_login.html")
 
-##暂时不需要预先传入参数
-
-
 def drop_account():
     global state
     global user_mapping
     ip = request.remote_addr
     if ip in state:
         if request.method == "GET":
-            if request.args.get("password") and request.args.get("confirm"):
-                if request.args.get("password") != to_md5("aaa") and request.args.get("confirm") != to_md5("aaa"):
-                    return "1;msg:success"
+            if request.args.get("id_number"):
+                id = user_mapping[ip]
+                ret = getStockUser(id)
+                if ret['status']:
+                    if request.args.get("id_number") == ret["result"]["id_number"]:
+                        ret_ret = delStockUser(id)
+                        if ret_ret['status']:
+                            state.remove(ip)
+                            user_mapping.pop(ip)
+                            return "1;%s" % ret_ret["error"]
+                        else:
+                            return "0;%s" % ret_ret["error"]
+                    else:
+                        return "0;Incorrect id_number"
                 else:
-                    return "0;msg:error"
+                    return "0;%s" % ret["error"]
             else:
                 return render_template("drop_account.html")
     else:
         return render_template("no_login.html")
-
 def user_login():
     global state
     global user_mapping
     ip = request.remote_addr
     if request.method=="GET":
-        if request.args.get("username") == "aaa" and request.args.get("password") == to_md5("aaa"):
-            if ip not in state:  # 单ip处理单用户
-                state.append(ip)
-            user_mapping[ip] = request.args.get("username")
-            return "1;msg:success"
-        elif request.args.get("username") and request.args.get("password"):
-            return "0;msg:error"
+        if request.args.get("username") and request.args.get("password"):
+            ret = loginStockUser(request.args.get("username"), request.args.get("password"))
+            if ret["status"]:
+                if ip not in state:  # 单ip处理单用户
+                    state.append(ip)
+                user_mapping[ip] = request.args.get("username")
+                return "1;%s" % ret["error"]
+                # return render_template("index.html")
+            else:
+                return "0;%s" % ret["error"]
         else:
             return render_template("user_login.html")
 
@@ -152,11 +171,20 @@ def loss_account():
     ip = request.remote_addr
     if ip in state:
         if request.method == "GET":
-            if request.args.get("password") and request.args.get("confirm"):
-                if request.args.get("password") != to_md5("aaa") and request.args.get("confirm") != to_md5("aaa"):
-                    return "1;msg:success"
+            if request.args.get("id_number"):
+                id=user_mapping[ip]
+                ret=getStockUser(id)
+                if ret['status']:
+                    if request.args.get("id_number")==ret["result"]["id_number"]:
+                        ret_ret=frozeStockUser(id)
+                        if ret_ret['status']:
+                            return "1;%s"%ret_ret["error"]
+                        else:
+                            return "0;%s"%ret_ret["error"]
+                    else:
+                        return "0;Incorrect id_number"
                 else:
-                    return "0;msg:error"
+                    return "0;%s"%ret["error"]
             else:
                 return render_template("loss_account.html")
     else:
@@ -164,13 +192,19 @@ def loss_account():
 
 def new_account():
     if request.method == "GET":
-        if request.args.get("password") and request.args.get("confirm"):
-            if request.args.get("password") != to_md5("aaa") and request.args.get("confirm") != to_md5("aaa"):
-                return "1;msg:success"
+            return render_template("new_account.html")
+    elif request.method=="POST":
+        form=request.form.to_dict()
+        if form:
+            ret=addStockUser(form['id'],form)
+            if ret["status"]:
+                return "1;%s" % ret["error"]
+                # return render_template("index.html")
             else:
-                return "0;msg:error"
+                return "0;%s" % ret["error"]
         else:
             return render_template("new_account.html")
+
 
 
 def renew_account():
@@ -179,11 +213,20 @@ def renew_account():
     ip = request.remote_addr
     if ip in state:
         if request.method == "GET":
-            if request.args.get("password") and request.args.get("confirm"):
-                if request.args.get("password") != to_md5("aaa") and request.args.get("confirm") != to_md5("aaa"):
-                    return "1;msg:success"
+            if request.args.get("id_number"):
+                id = user_mapping[ip]
+                ret = getStockUser(id)
+                if ret['status']:
+                    if request.args.get("id_number") == ret["result"]["id_number"]:
+                        ret_ret = unfrozeStockUser(id)
+                        if ret_ret['status']:
+                            return "1;%s" % ret_ret["error"]
+                        else:
+                            return "0;%s" % ret_ret["error"]
+                    else:
+                        return "0;Incorrect id_number"
                 else:
-                    return "0;msg:error"
+                    return "0;%s" % ret["error"]
             else:
                 return render_template("renew_account.html")
     else:
