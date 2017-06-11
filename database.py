@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import sqlite3
 
-DB_NAME = '../../tradeSystem.db'
+DB_NAME = 'tradeSystem.db'
 CONN = sqlite3.connect(DB_NAME, isolation_level=None)
 cur = CONN.cursor()
 cur.execute("PRAGMA foreign_keys = ON;")
@@ -196,10 +196,20 @@ def __queryStockQueryManager(id):
 
 ################################################################################
 
-###
-#	add stock account
-#	return:	{'status', 'error'}
+# brief:	add stock account
+# return:	{'status', 'error'}
 def addStockUser(id, info):
+	"""Add a stock user
+
+	Args:
+		id: id of the new stock user
+		info: other infomations about the user
+	
+	Return:
+		A dict mapping keys include:
+		'status': True or False. The result of operation.
+		'error': Error message when 'status'=False
+	"""
 	ret = {'status': False, 'error': None}
 
 	res = __insertStockUser(id, info)
@@ -210,8 +220,8 @@ def addStockUser(id, info):
 	ret['status'] = True
 	return ret
 
-###
-#	update stock account
+# brief:	update stock user info
+# return:	{'status', 'error'}
 def updStockUser(id, info):
 	ret = {'status': False, 'error': None}
 
@@ -223,9 +233,8 @@ def updStockUser(id, info):
 	ret['status'] = True
 	return ret
 
-###
-#	get stock user info by id
-#	return:	{'status', 'error', 'result'}
+# brief:	get stock user info by id
+# return:	{'status', 'error', 'result'}
 def getStockUser(id):
 	ret = {'status': False, 'error': None, 'result': None}
 
@@ -244,7 +253,6 @@ def getStockUser(id):
 	ret['result'] = res
 	return ret
 
-###
 #	login check
 #	return:	{'status', 'error'}
 def loginStockUser(id, password):
@@ -466,7 +474,6 @@ def init():
 			PRIMARY KEY (id)
 		);''')
 
-
 def testUser():
 	user = {}
 
@@ -482,6 +489,7 @@ def test1():
 def test2():
 	print addFundAccount('0123456789', 223489)
 	print addFundAccount('0123456789', 2234839)
+	print getStockUser('0123456789')
 
 if __name__ == "__main__":
 #	init()
@@ -493,7 +501,6 @@ if __name__ == "__main__":
 	cur.execute("SELECT * FROM StockUserFund")
 	print cur.fetchall()
 
-	print getStockUser('0123456789')
 	print sqlite3.sqlite_version
 
 	delStockUser('0123456789')
