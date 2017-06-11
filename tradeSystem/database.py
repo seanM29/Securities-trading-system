@@ -233,6 +233,8 @@ def updStockUser(id, info):
 	"""
 	ret = {'status': False, 'error': None}
 
+	if 'available' in info:
+		del info['available']
 	res = __updateStockUser(id, info)
 	if isinstance(res, str):
 		ret['error'] = res
@@ -575,7 +577,8 @@ def test1():
 	t = {
 		'id': '0123456789',
 		'password': '01cd2d699991ea786acf871aa39646dd',
-		'sex': 1
+		'sex': 1,
+		'degree': 3
 	}
 	print addStockUser(t['id'], t)
 
@@ -583,10 +586,12 @@ def test2():
 	print addFundAccount('0123456789', 223489)
 	print addFundAccount('0123456789', 2234839)
 	print getStockUser('0123456789')
+	print getFundAccount('0123456789')
 
 def test3():
 	print frozeStockUser('0123456789')
-	print frozeStockUser('0123456789')
+	print unfrozeStockUser('0123456789')
+	print updStockUser('0123456789', {'degree': 3})
 
 def testend():
 	cur.execute("SELECT * FROM StockUser")
@@ -603,7 +608,7 @@ def testend():
 	print cur.fetchall()
 
 if __name__ == "__main__":
-	init()
+#	init()
 	test1()
 	test2()
 	test3()
