@@ -95,6 +95,7 @@ def __insertStockUser(id, info):
 		del info['create_time']
 
 	s = __dictToListStockUser(info)
+	s[3] = 'CURRENT_TIMESTAMP'
 	try:
 		cur.execute("INSERT INTO Stockuser VALUES (%s)" %(','.join(s)))
 	except Exception as e:
@@ -606,7 +607,8 @@ def init():
 				NOT NULL,
 
 			create_time timestamp
-				DEFAULT CURRENT_TIMESTAMP,
+				NOT NULL
+				DEFAULT (datetime('now', 'localtime')),
 
 			name nvarchar(64),
 			sex integer
@@ -683,7 +685,7 @@ def test1():
 		'degree': 3
 	}
 	print addStockUser(t['id'], t)
-	print addStockUser('1111111111', {})
+	print addStockUser('1111111111', {'password': '01cd2d699991ea786acf871aa39646dd'})
 
 def test2():
 	print addFundAccount('0123456789', 223489)
@@ -699,7 +701,7 @@ def test3():
 
 def testend():
 	cur.execute("SELECT * FROM StockUser")
-	print cur.fetchone()
+	print cur.fetchall()
 	cur.execute("SELECT * FROM StockUserFund")
 	print cur.fetchall()
 
@@ -713,8 +715,8 @@ def testend():
 	print cur.fetchall()
 
 if __name__ == "__main__":
-#	init()
-	test1()
-	test2()
-	test3()
-	testend()
+	init()
+#	test1()
+#	test2()
+#	test3()
+#	testend()
