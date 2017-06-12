@@ -15,8 +15,18 @@ cur.execute("PRAGMA foreign_keys = ON;")
 ###
 #	about stock users
 def __checkid(id, length=10):
+	"""Check whether id is consisted of digits
+
+	Args:
+		id: id of the stock user
+		length: expected length. Set it to None when there is no requirement of length
+	
+	Return:
+		bool: True for valid
+	"""
 	return id.isdigit() and ((not length) or len(id) == length)
 
+# rows of table StockUser
 __attrListStockUser = (
 	'id',
 	'available',
@@ -34,6 +44,14 @@ __attrListStockUser = (
 )
 
 def __dictToListStockUser(src):
+	"""Convert a dict of rows of StockUser to list
+
+	Args:
+		src: a dict represent a row of StockUser
+	
+	Return:
+		list: a list represent the row of StockUser
+	"""
 	global __attrListStockUser
 	ret = []
 	for attr in __attrListStockUser:
@@ -41,6 +59,14 @@ def __dictToListStockUser(src):
 	return ret
 
 def __listToDictStockUser(src):
+	"""Convert a list of rows of StockUser to dict
+
+	Args:
+		src: a list represent a row of StockUser
+	
+	Return:
+		list: a dict represent the row of StockUser
+	"""
 	global __attrListStockUser
 	ret = {}
 	i = 0
@@ -50,6 +76,16 @@ def __listToDictStockUser(src):
 	return ret
 
 def __insertStockUser(id, info):
+	"""Insert a row into StockUser
+
+	Args:
+		id: id of the stock user
+		info: info of the stock user
+	
+	Return:
+		None: success
+		string: error message
+	"""
 	id = str(id)
 	if not __checkid(id):
 		return 'Invalid stock user id'
@@ -70,6 +106,16 @@ def __insertStockUser(id, info):
 		return None
 
 def __updateStockUser(id, info):
+	"""Update a row into StockUser
+
+	Args:
+		id: id of the stock user
+		info: info of the stock user which need to be updated
+	
+	Return:
+		None: success
+		string: error message
+	"""
 	id = str(id)
 	if not __checkid(id):
 		return 'Invalid stock user id'
@@ -96,6 +142,15 @@ def __updateStockUser(id, info):
 		return None
 
 def __queryStockUser(id):
+	"""Query a row into StockUser by id
+
+	Args:
+		id: id of the stock user
+	
+	Return:
+		dict: the selected row
+		string: error message
+	"""
 	id = str(id)
 	if not __checkid(id):
 		return 'Invalid stock user id'
@@ -109,6 +164,15 @@ def __queryStockUser(id):
 	return res
 
 def __deleteStockUser(id):
+	"""Delete a row from StockUser
+
+	Args:
+		id: id of the stock user
+	
+	Return:
+		None: success
+		string: error message
+	"""
 	id = str(id)
 	if not __checkid(id):
 		return 'Invalid stock user id'
@@ -120,9 +184,17 @@ def __deleteStockUser(id):
 	else:
 		return None
 
-###
-#	insert fund account
 def __insertFundAccount(id, fund_id):
+	"""Insert a row into FundAccount
+
+	Args:
+		id: id of the stock user
+		fund_id: id of the fund account
+	
+	Return:
+		None: success
+		string: error message
+	"""
 	id = str(id)
 	fund_id = str(fund_id)
 	if not __checkid(id):
@@ -138,6 +210,15 @@ def __insertFundAccount(id, fund_id):
 		return None
 
 def __queryFundAccount(id):
+	"""Query rows of FundAccount by id
+
+	Args:
+		id: id of the stock user
+	
+	Return:
+		list: select fund accounts from FundAccount
+		string: error message
+	"""
 	id = str(id)
 	if not __checkid(id):
 		return "invalid stock user id"
@@ -147,9 +228,17 @@ def __queryFundAccount(id):
 	res = [{'id': x[0], 'fund_id': x[1]} for x in res]
 	return res
 
-###
-#	delete fund account
 def __deleteFundAccount(id, fund_id):
+	"""Delete a row from FundAccount
+
+	Args:
+		id: id of the stock user
+		info: id of the fund account
+	
+	Return:
+		None: success
+		string: error message
+	"""
 	id = str(id)
 	fund_id = str(fund_id)
 	if not __checkid(id):
@@ -164,10 +253,16 @@ def __deleteFundAccount(id, fund_id):
 	else:
 		return None
 
-###
-#	get info of StockUserManager by id
-#	including verify of id
 def __queryStockUserManager(id):
+	"""Query a row of StockUserManager
+
+	Args:
+		id: id of the stock user manager
+	
+	Return:
+		dict: manager info
+		string: error message
+	"""
 	id = str(id)
 	if not __checkid(id):
 		return 'Invalid id'
@@ -180,9 +275,16 @@ def __queryStockUserManager(id):
 	res = {'id': res[0], 'password': res[1], 'name': res[2]}
 	return res
 
-###
-#	get info of StockQueryManager
 def __queryStockQueryManager(id):
+	"""Query a row of StockQueryManager
+
+	Args:
+		id: id of the stock query manager
+	
+	Return:
+		dict: manager info
+		string: error message
+	"""
 	id = str(id)
 	if not __checkid(id):
 		return "invalid id"
@@ -581,10 +683,12 @@ def test1():
 		'degree': 3
 	}
 	print addStockUser(t['id'], t)
+	print addStockUser('1111111111', {})
 
 def test2():
 	print addFundAccount('0123456789', 223489)
 	print addFundAccount('0123456789', 2234839)
+	print addFundAccount('1111111111', 2234839)
 	print getStockUser('0123456789')
 	print getFundAccount('0123456789')
 
@@ -602,14 +706,15 @@ def testend():
 	print sqlite3.sqlite_version
 
 	delStockUser('0123456789')
+	delStockUser('1111111111')
 	cur.execute("SELECT * FROM StockUser")
 	print cur.fetchall()
 	cur.execute("SELECT * FROM StockUserFund")
 	print cur.fetchall()
 
 if __name__ == "__main__":
-	init()
-	# test1()
-	# test2()
-	# test3()
-	# testend()
+#	init()
+	test1()
+	test2()
+	test3()
+	testend()
