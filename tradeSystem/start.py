@@ -46,6 +46,37 @@ def page(x):
     fuc = x.split(".html")[0]
     return eval(fuc)()
 
+
+def check():
+    if request.method=="GET":
+        if request.args.get("id") and request.args.get("password"):
+            ret=loginStockUser(request.args.get("id"),request.args.get("password"))
+            return json.dumps(ret)
+
+def information():
+    if request.method=="GET":
+        if request.args.get("id"):
+            ret1=getStockUser(request.args.get("id"))
+            ret2=getFundAccount(request.args.get("id"))
+            ret3=getStocks(request.args.get("id"))
+            if ret1["status"]:
+                if ret2["status"]:
+                    if ret3["status"]:
+                        fund_list=[x["fund_id"] for x in ret2["result"]]
+                        stock_list=[x.pop("id") for x in ret3["result"] if x]
+                        ret1["result"]["fund_list"]=fund_list
+                        ret1["result"]["stock_list"]=stock_list
+                        return json.dumps(ret1)
+                    else:
+                        ret3["result"]=None
+                        return json.dumps(ret3)
+                else:
+                    ret2["result"]=None
+                    return json.dumps(ret2)
+            else:
+                ret1["result"]=None
+                return json.dumps(ret1)
+
 def change_password():
     global state
     global user_mapping
