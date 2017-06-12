@@ -210,6 +210,26 @@ def __insertFundAccount(id, fund_id):
 	else:
 		return None
 
+
+def __queryStocks(id):
+	"""Query rows of Stocks by id
+
+	Args:
+		id: id of the stock user
+
+	Return:
+		list: select stocks from Stock
+		string: error message
+	"""
+	id = str(id)
+	if not __checkid(id):
+		return "invalid stock user id"
+
+	cur.execute("SELECT * FROM Stock where id == \"%s\"" % (id))
+	res = cur.fetchall()
+	res = [{'id': x[0], 'stock_id': x[1], 'own': x[2], 'frozen': x[3]} for x in res]
+	return res
+
 def __queryFundAccount(id):
 	"""Query rows of FundAccount by id
 
@@ -493,6 +513,30 @@ def addFundAccount(id, fund_id):
 		return ret
 
 	ret['status'] = True
+	return ret
+
+
+def getStocks(id):
+	"""Get stocks of a stock user
+
+	Args:
+		id: id of the stock user
+
+	Return:
+		A dict mapping keys include:
+		'status': True or False. The result of operation.
+		'error': Error message when 'status'=False
+		'result': Stocks of a stock user
+	"""
+	ret = {'status': False, 'error': None, 'result': None}
+
+	res = __queryStocks(id)
+	if isinstance(res, str):
+		ret['error'] = res
+		return ret
+
+	ret['status'] = True
+	ret['result'] = res
 	return ret
 
 def getFundAccount(id):
