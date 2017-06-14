@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title> 证券账户接口测试</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link href="./static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="./static/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <link href="./static/css/animate.css" rel="stylesheet">
+    <link href="./static/css/style.css?v=4.1.0" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+<div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-6" id="user_window_1">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>用户 1</h5>
+                        <div class="ibox-tools">
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="ibox-content">
+
+                        <h5 align="center">流动证券余额</h5>
+                        <div id="user_1_circulate"></div>
+
+                        <br> </br>
+                        <h5 align="center">冻结证券余额</h5>
+                        <div id="user_1_freeze"></div>
+                        <div>
+                            <input id="user_1_buy" type="text" style="margin-right: 20px"></input>
+                            <button type="button" class="btn btn-primary btn" onclick="trade_handle(0)">买入</button>
+                        </div>
+                        <div>
+                            <input id="user_1_sell" type="text" style="margin-right: 20px"></input>
+                            <button type="button" class="btn btn-primary btn" onclick="trade_handle(1)">卖出</button>
+                        </div>
+                    </div>   
+                </div>
+
+            </div>
+
+            <div class="col-sm-6" id="user_window_2">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>用户 2</h5>
+                        <div class="ibox-tools">
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="ibox-content">
+                        <div>
+                            <h5 align="center">流动证券余额</h5>
+                            <div id="user_2_circulate" align="center"></div>
+                        </div>
+
+                        <br> </br>
+                        <h5 align="center">冻结证券余额</h5>
+                        <div id="user_2_freeze"></div>
+                        <div>
+                            <input id="user_2_buy" type="text" style="margin-right: 20px"></input>
+                            <button type="button" class="btn btn-primary btn" onclick="trade_handle(2)">买入</button>
+                        </div>
+                        <div>
+                            <input id="user_2_sell" type="text" style="margin-right: 20px"></input>
+                            <button type="button" class="btn btn-primary btn" onclick="trade_handle(3)">卖出</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-4" id="user_window_1">
+            </div>
+            <div class="col-sm-4" id="user_window_1">
+                <button type="button" class="btn btn-block btn-outline btn-primary">指令撮合</button>
+            </div>
+            <div class="col-sm-4" id="user_window_1">
+            </div>
+        </div>
+    </div>
+    <!-- 全局js -->
+    <script src="./static/js/jquery.min.js?v=2.1.4"></script>
+    <script src="./static/js/bootstrap.min.js?v=3.3.6"></script>
+
+
+</body>
+
+<link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600,800,900" rel="stylesheet" type="text/css">
+<script src="./static/js/progressbar.min.js"></script>
+
+<style type="text/css">
+
+#user_1_circulate {
+  margin: auto;
+  /*margin: 20px;*/
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+#user_1_freeze {
+  margin: auto;
+  /*margin: 20px;*/
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+#user_2_circulate {
+  margin: auto;
+  /*margin: 20px;*/
+  width: 200px;
+  height: 200px;
+  position: relative;
+
+}
+
+#user_2_freeze {
+  margin: auto;
+  /*margin: 20px;*/
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+</style>
+
+
+<script>
+    MAX_STOCK = 5000; 
+
+    var bar_circulate1 = new ProgressBar.Circle(user_1_circulate, {
+      color: '#aaa',
+      // This has to be the same size as the maximum width to
+      // prevent clipping
+      strokeWidth: 12,
+      trailWidth: 12,
+      easing: 'easeInOut',
+      duration: 1400,
+      text: {
+        autoStyleContainer: false
+      },
+      from: { color: '#D50000', width: 8 },
+      to: { color: '#D50000', width: 12 },
+      // Set default step function for all animate calls
+      step: function(state, circle) {
+        circle.path.setAttribute('stroke', state.color);
+        circle.path.setAttribute('stroke-width', state.width);
+
+        var value = Math.round(circle.value() * MAX_STOCK);
+        if (value === 0) {
+          circle.setText('');
+        } else {
+          circle.setText(value);
+        }
+
+      }
+    });
+    bar_circulate1.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+    bar_circulate1.text.style.fontSize = '2rem';
+
+    var bar_circulate2 = new ProgressBar.Circle(user_2_circulate, {
+      color: '#aaa',
+      // This has to be the same size as the maximum width to
+      // prevent clipping
+      strokeWidth: 12,
+      trailWidth: 12,
+      easing: 'easeInOut',
+      duration: 1400,
+      text: {
+        autoStyleContainer: false
+      },
+      from: { color: '#D50000', width: 8 },
+      to: { color: '#D50000', width: 12 },
+      // Set default step function for all animate calls
+      step: function(state, circle) {
+        circle.path.setAttribute('stroke', state.color);
+        circle.path.setAttribute('stroke-width', state.width);
+
+        var value = Math.round(circle.value() * MAX_STOCK);
+        if (value === 0) {
+          circle.setText('');
+        } else {
+          circle.setText(value);
+        }
+
+      }
+    });
+    bar_circulate2.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+    bar_circulate2.text.style.fontSize = '2rem';
+    
+
+    var bar_freeze1 = new ProgressBar.Circle(user_1_freeze, {
+      color: '#aaa',
+      // This has to be the same size as the maximum width to
+      // prevent clipping
+      strokeWidth: 12,
+      trailWidth: 12,
+      easing: 'easeInOut',
+      duration: 1400,
+      text: {
+        autoStyleContainer: false
+      },
+      from: { color: '#2196F3', width: 8 },
+      to: { color: '#2196F3', width: 12 },
+      // Set default step function for all animate calls
+      step: function(state, circle) {
+        circle.path.setAttribute('stroke', state.color);
+        circle.path.setAttribute('stroke-width', state.width);
+
+        var value = Math.round(circle.value() * MAX_STOCK);
+        if (value === 0) {
+          circle.setText('');
+        } else {
+          circle.setText(value);
+        }
+
+      }
+    });
+    bar_freeze1.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+    bar_freeze1.text.style.fontSize = '2rem';
+
+    var bar_freeze2 = new ProgressBar.Circle(user_2_freeze, {
+      color: '#aaa',
+      // This has to be the same size as the maximum width to
+      // prevent clipping
+      strokeWidth: 12,
+      trailWidth: 12,
+      easing: 'easeInOut',
+      duration: 1400,
+      text: {
+        autoStyleContainer: false
+      },
+      from: { color: '#2196F3', width: 8 },
+      to: { color: '#2196F3', width: 12 },
+      // Set default step function for all animate calls
+      step: function(state, circle) {
+        circle.path.setAttribute('stroke', state.color);
+        circle.path.setAttribute('stroke-width', state.width);
+
+        var value = Math.round(circle.value() * MAX_STOCK);
+        if (value === 0) {
+          circle.setText('');
+        } else {
+          circle.setText(value);
+        }
+
+      }
+    });
+    bar_freeze2.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+    bar_freeze2.text.style.fontSize = '2rem';
+
+    function changeProcessBar(id, percent) {
+        if (id == 0) {
+        // User 1 circulated stock
+            bar_circulate1.animate(percent);
+        } else if (id == 1) {
+        // User 1 freezed stock
+            bar_freeze1.animate(percent);
+
+        } else if (id == 2) {
+        // User 2 circulated stock
+            bar_circulate2.animate(percent);
+
+        } else if (id == 3) {
+        // User 2 freezed stock
+            bar_freeze2.animate(percent);
+        }
+    }
+
+    sum_circulate_1 = 3000;
+    sum_freeze_1 = 1000;
+    sum_circulate_2 = 2000;
+    sum_freeze_2 = 1500;
+    changeProcessBar(0, sum_circulate_1 / MAX_STOCK);
+    changeProcessBar(1, sum_freeze_1 / MAX_STOCK);
+    changeProcessBar(2, sum_circulate_2 / MAX_STOCK);
+    changeProcessBar(3, sum_freeze_2 / MAX_STOCK);
+
+    function trade_handle(id) {
+        if (id == 0) {
+        // User 1 buy
+            add_val = $("#user_1_buy").val();
+            sum_circulate_1 = sum_circulate_1 + parseInt(add_val);
+            changeProcessBar(0, sum_circulate_1 / MAX_STOCK);
+            $("#user_1_buy").val('');
+        } else if (id == 1) {
+        // User 1 sell
+            sub_val = $("#user_1_sell").val();
+            sum_circulate_1 = sum_circulate_1 - parseInt(sub_val);
+            changeProcessBar(0, sum_circulate_1 / MAX_STOCK);
+
+            sum_freeze_1 = sum_freeze_1 + parseInt(sub_val);
+            changeProcessBar(1, sum_freeze_1 / MAX_STOCK);
+            $("user_1_sell").val('');
+
+        } else if (id == 2) {
+        // User 2 buy
+            add_val = $("#user_2_buy").val();
+            sum_circulate_2 = sum_circulate_2 + parseInt(add_val);
+            changeProcessBar(2, sum_circulate_2 / MAX_STOCK);
+            $("#user_2_buy").val('');
+
+        } else if (id == 3) {
+        // User 2 sell
+            sub_val = $("#user_2_sell").val();
+            sum_circulate_2 = sum_circulate_2 - parseInt(sub_val);
+            changeProcessBar(2, sum_circulate_2 / MAX_STOCK);
+            
+            sum_freeze_2 = sum_freeze_2 + parseInt(sub_val);
+            changeProcessBar(3, sum_freeze_2 / MAX_STOCK);
+            $("#user_2_sell").val('');
+        }
+    }
+</script>
+
+</html>
