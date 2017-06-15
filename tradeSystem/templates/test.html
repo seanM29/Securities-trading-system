@@ -297,6 +297,11 @@
     sum_circulate_2 = 0
     sum_freeze_2 = 0;
 	function update_user(id){
+		if (id=="1706140001")
+				{sum_circulate_1=0;
+				sum_freeze_1=0;}
+				else if (id=="1706140002"){sum_circulate_2=0;
+				sum_freeze_2=0;}
 	 $.ajax({
       type: "GET",
       url: '/information?id='+id,
@@ -378,9 +383,9 @@
     })
 	}
 	
-	function update_bar(){changeProcessBar(0, sum_circulate_1 / MAX_STOCK);
+	function update_bar(){changeProcessBar(0, (sum_circulate_1-sum_freeze_1) / MAX_STOCK);
     changeProcessBar(1, sum_freeze_1 / MAX_STOCK);
-    changeProcessBar(2, sum_circulate_2 / MAX_STOCK);
+    changeProcessBar(2, (sum_circulate_2-sum_freeze_2) / MAX_STOCK);
     changeProcessBar(3, sum_freeze_2 / MAX_STOCK);}
     
 
@@ -394,7 +399,7 @@
         // User 1 sell
             sub_val = $("#user_1_sell").val();
             want_sell("1706140001",sub_val);
-            $("user_1_sell").val('');
+            $("#user_1_sell").val('');
         } else if (id == 2) {
         // User 2 buy
             add_val = $("#user_2_buy").val();
