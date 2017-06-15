@@ -46,6 +46,31 @@ def page(x):
     fuc = x.split(".html")[0]
     return eval(fuc)()
 
+def test():
+    # if ret1["status"] and ret2["status"] and ret3["status"] and ret4["status"]:
+    #     return "1;success"
+    # else:
+    #     return "0;error"
+    return render_template("test.html")
+        #ret1=delStockUser('1234567890')
+    #ret2=delStockUser('0123456789')
+
+
+def want_sell():
+    if request.method=="GET":
+        ret=frozeStock(request.args.get("id"),request.args.get("stock_id"),request.args.get("amount"))
+        if ret["status"]:
+            return "1;%s"%ret["error"]
+        else:
+            return "0;%s"%ret["error"]
+
+def transaction():
+    if request.method=="GET":
+        ret=mvStock(request.args.get("id_1"),request.args.get("id_2"),request.args.get("stock_id"),request.args.get("amount"))
+        if ret["status"]:
+            return "1;%s"%ret["error"]
+        else:
+            return "0;%s"%ret["error"]
 
 def check():
     if request.method=="GET":
@@ -63,7 +88,8 @@ def information():
                 if ret2["status"]:
                     if ret3["status"]:
                         fund_list=[x["fund_id"] for x in ret2["result"]]
-                        stock_list=[x.pop("id") for x in ret3["result"] if x]
+                        stock_list=[x  for x in ret3["result"] if x.pop("id")]
+                        ret1["result"].pop("fund")
                         ret1["result"]["fund_list"]=fund_list
                         ret1["result"]["stock_list"]=stock_list
                         return json.dumps(ret1)
@@ -332,6 +358,9 @@ def index_searchTrade():
 def index_v1():
     return render_template("index_v1.html")
 
+def on_login():
+    return render_template("on_login.html")
+
 def projects():
     return render_template("projects.html")
 
@@ -342,4 +371,4 @@ def to_md5(name):
     return id
 
 if __name__ == '__main__':
-    app.run(debug=True,threaded=True)
+    app.run(host='0.0.0.0',debug=True,threaded=True)

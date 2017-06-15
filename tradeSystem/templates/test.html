@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title> 证券账户接口测试</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link href="./static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="./static/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <link href="./static/css/animate.css" rel="stylesheet">
+    <link href="./static/css/style.css?v=4.1.0" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+<div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-6" id="user_window_1">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>用户 1：A股票</h5>
+                        <div class="ibox-tools">
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="ibox-content">
+
+                        <h5 align="center">流动证券余额</h5>
+                        <div id="user_1_circulate"></div>
+
+                        <br> </br>
+                        <h5 align="center">冻结证券余额</h5>
+                        <div id="user_1_freeze"></div>
+                        <div>
+                            <input id="user_1_buy" type="text" style="margin-right: 20px"></input>
+                            <button type="button" class="btn btn-primary btn" onclick="trade_handle(0)">成功买入</button>
+                        </div>
+                        <div>
+                            <input id="user_1_sell" type="text" style="margin-right: 20px"></input>
+                            <button type="button" class="btn btn-primary btn" onclick="trade_handle(1)">挂卖股票</button>
+                        </div>
+                    </div>   
+                </div>
+
+            </div>
+
+            <div class="col-sm-6" id="user_window_2">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>用户 2：A股票</h5>
+                        <div class="ibox-tools">
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="ibox-content">
+                        <div>
+                            <h5 align="center">流动证券余额</h5>
+                            <div id="user_2_circulate" align="center"></div>
+                        </div>
+
+                        <br> </br>
+                        <h5 align="center">冻结证券余额</h5>
+                        <div id="user_2_freeze"></div>
+                        <div>
+                            <input id="user_2_buy" type="text" style="margin-right: 20px"></input>
+                            <button type="button" class="btn btn-primary btn" onclick="trade_handle(2)">成功买入</button>
+                        </div>
+                        <div>
+                            <input id="user_2_sell" type="text" style="margin-right: 20px"></input>
+                            <button type="button" class="btn btn-primary btn" onclick="trade_handle(3)">挂卖股票</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="wrapper wrapper-content animated fadeInRight"> -->
+        <!-- <div class="row"> -->
+            <!-- <div class="col-sm-4" id="user_window_1"> -->
+            <!-- </div> -->
+            <!-- <div class="col-sm-4" id="user_window_1"> -->
+                <!-- <button type="button" class="btn btn-block btn-outline btn-primary">指令撮合</button> -->
+            <!-- </div> -->
+            <!-- <div class="col-sm-4" id="user_window_1"> -->
+            <!-- </div> -->
+        <!-- </div> -->
+    <!-- </div> -->
+    <!-- 全局js -->
+    <script src="./static/js/jquery.min.js?v=2.1.4"></script>
+    <script src="./static/js/bootstrap.min.js?v=3.3.6"></script>
+
+
+</body>
+
+<link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600,800,900" rel="stylesheet" type="text/css">
+<script src="./static/js/progressbar.min.js"></script>
+<link href="./static/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+<script src="./static/js/plugins/toastr/toastr.min.js"></script>
+<style type="text/css">
+
+#user_1_circulate {
+  margin: auto;
+  /*margin: 20px;*/
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+#user_1_freeze {
+  margin: auto;
+  /*margin: 20px;*/
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+#user_2_circulate {
+  margin: auto;
+  /*margin: 20px;*/
+  width: 200px;
+  height: 200px;
+  position: relative;
+
+}
+
+#user_2_freeze {
+  margin: auto;
+  /*margin: 20px;*/
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+</style>
+
+
+<script>
+    MAX_STOCK = 1000; 
+
+    var bar_circulate1 = new ProgressBar.Circle(user_1_circulate, {
+      color: '#aaa',
+      // This has to be the same size as the maximum width to
+      // prevent clipping
+      strokeWidth: 12,
+      trailWidth: 12,
+      easing: 'easeInOut',
+      duration: 1400,
+      text: {
+        autoStyleContainer: false
+      },
+      from: { color: '#D50000', width: 8 },
+      to: { color: '#D50000', width: 12 },
+      // Set default step function for all animate calls
+      step: function(state, circle) {
+        circle.path.setAttribute('stroke', state.color);
+        circle.path.setAttribute('stroke-width', state.width);
+
+        var value = Math.round(circle.value() * MAX_STOCK);
+        if (value === 0) {
+          circle.setText('');
+        } else {
+          circle.setText(value);
+        }
+
+      }
+    });
+    bar_circulate1.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+    bar_circulate1.text.style.fontSize = '2rem';
+
+    var bar_circulate2 = new ProgressBar.Circle(user_2_circulate, {
+      color: '#aaa',
+      // This has to be the same size as the maximum width to
+      // prevent clipping
+      strokeWidth: 12,
+      trailWidth: 12,
+      easing: 'easeInOut',
+      duration: 1400,
+      text: {
+        autoStyleContainer: false
+      },
+      from: { color: '#D50000', width: 8 },
+      to: { color: '#D50000', width: 12 },
+      // Set default step function for all animate calls
+      step: function(state, circle) {
+        circle.path.setAttribute('stroke', state.color);
+        circle.path.setAttribute('stroke-width', state.width);
+
+        var value = Math.round(circle.value() * MAX_STOCK);
+        if (value === 0) {
+          circle.setText('');
+        } else {
+          circle.setText(value);
+        }
+
+      }
+    });
+    bar_circulate2.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+    bar_circulate2.text.style.fontSize = '2rem';
+    
+
+    var bar_freeze1 = new ProgressBar.Circle(user_1_freeze, {
+      color: '#aaa',
+      // This has to be the same size as the maximum width to
+      // prevent clipping
+      strokeWidth: 12,
+      trailWidth: 12,
+      easing: 'easeInOut',
+      duration: 1400,
+      text: {
+        autoStyleContainer: false
+      },
+      from: { color: '#2196F3', width: 8 },
+      to: { color: '#2196F3', width: 12 },
+      // Set default step function for all animate calls
+      step: function(state, circle) {
+        circle.path.setAttribute('stroke', state.color);
+        circle.path.setAttribute('stroke-width', state.width);
+
+        var value = Math.round(circle.value() * MAX_STOCK);
+        if (value === 0) {
+          circle.setText('');
+        } else {
+          circle.setText(value);
+        }
+
+      }
+    });
+    bar_freeze1.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+    bar_freeze1.text.style.fontSize = '2rem';
+
+    var bar_freeze2 = new ProgressBar.Circle(user_2_freeze, {
+      color: '#aaa',
+      // This has to be the same size as the maximum width to
+      // prevent clipping
+      strokeWidth: 12,
+      trailWidth: 12,
+      easing: 'easeInOut',
+      duration: 1400,
+      text: {
+        autoStyleContainer: false
+      },
+      from: { color: '#2196F3', width: 8 },
+      to: { color: '#2196F3', width: 12 },
+      // Set default step function for all animate calls
+      step: function(state, circle) {
+        circle.path.setAttribute('stroke', state.color);
+        circle.path.setAttribute('stroke-width', state.width);
+
+        var value = Math.round(circle.value() * MAX_STOCK);
+        if (value === 0) {
+          circle.setText('');
+        } else {
+          circle.setText(value);
+        }
+
+      }
+    });
+    bar_freeze2.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+    bar_freeze2.text.style.fontSize = '2rem';
+
+    function changeProcessBar(id, percent) {
+        if (id == 0) {
+        // User 1 circulated stock
+            bar_circulate1.animate(percent);
+        } else if (id == 1) {
+        // User 1 freezed stock
+            bar_freeze1.animate(percent);
+
+        } else if (id == 2) {
+        // User 2 circulated stock
+            bar_circulate2.animate(percent);
+
+        } else if (id == 3) {
+        // User 2 freezed stock
+            bar_freeze2.animate(percent);
+        }
+    }
+	
+    sum_circulate_1 = 0;
+    sum_freeze_1 = 0;
+    sum_circulate_2 = 0
+    sum_freeze_2 = 0;
+	function update_user(id){
+	 $.ajax({
+      type: "GET",
+      url: '/information?id='+id,
+      cache: false,
+      async: false,
+      success: function(data){
+		info=eval("("+data+")");
+		if (info["status"])
+		{for ( var i=0;i<info["result"]["stock_list"].length;i++)
+		{
+			stock=info["result"]["stock_list"][i];
+			//alert(stock["stock_id"]);
+			if (stock["stock_id"]==170001)
+			{
+				//alert(stock["own"]);
+				if (id=="1706140001")
+				{sum_circulate_1=stock["own"];
+				sum_freeze_1=stock["frozen"];}
+				else if (id=="1706140002"){sum_circulate_2=stock["own"];
+				sum_freeze_2=stock["frozen"];}
+			}
+		}}
+      }
+    })}
+	update_user("1706140001");
+	update_user("1706140002");
+	update_bar();
+    function want_sell(id,amount)
+	{
+		 $.ajax({
+      type: "GET",
+      url: '/want_sell?id='+id+'&stock_id=170001&amount='+amount,
+      cache: false,
+      async: false,
+      success: function(data){
+		var return_val = data;
+        console.log(data);
+        var suc = return_val.split(";")[0];
+        var err_msg = return_val.split(";")[1];
+		if (suc == '1') {
+                        toastr.options.closeButton = true;
+                        toastr.options.timeOut = 1000;
+                        toastr.success('挂卖成功!');
+						update_user(id);
+                    } else {
+                        toastr.options.closeButton = true;
+                        toastr.options.timeOut = 1000;
+                        toastr.error('挂卖失败! '+ err_msg);
+                }
+		
+      }
+    })
+	}
+	function buy(id_1,id_2,amount)
+	{
+		$.ajax({
+      type: "GET",
+      url: '/transaction?id_1='+id_1+'&id_2='+id_2+'&stock_id=170001'+'&amount='+amount,
+      cache: false,
+      async: false,
+      success: function(data){
+		var return_val = data;
+        console.log(data);
+        var suc = return_val.split(";")[0];
+        var err_msg = return_val.split(";")[1];
+		if (suc == '1') {
+                        toastr.options.closeButton = true;
+                        toastr.options.timeOut = 1000;
+                        toastr.success('买入成功!');
+						update_user(id_1);
+						update_user(id_2);
+                    } else {
+                        toastr.options.closeButton = true;
+                        toastr.options.timeOut = 1000;
+                        toastr.error('买入失败! '+ err_msg);
+                }
+		
+      }
+    })
+	}
+	
+	function update_bar(){changeProcessBar(0, sum_circulate_1 / MAX_STOCK);
+    changeProcessBar(1, sum_freeze_1 / MAX_STOCK);
+    changeProcessBar(2, sum_circulate_2 / MAX_STOCK);
+    changeProcessBar(3, sum_freeze_2 / MAX_STOCK);}
+    
+
+    function trade_handle(id) {
+        if (id == 0) {
+        // User 1 buy
+            add_val = $("#user_1_buy").val();
+			buy("1706140002","1706140001",add_val);
+            $("#user_1_buy").val('');
+        } else if (id == 1) {
+        // User 1 sell
+            sub_val = $("#user_1_sell").val();
+            want_sell("1706140001",sub_val);
+            $("user_1_sell").val('');
+        } else if (id == 2) {
+        // User 2 buy
+            add_val = $("#user_2_buy").val();
+            buy("1706140001","1706140002",add_val);
+            $("#user_2_buy").val('');
+        } else if (id == 3) {
+        // User 2 sell
+            sub_val = $("#user_2_sell").val();
+            want_sell("1706140002",sub_val);
+            $("#user_2_sell").val('');
+        }
+		update_bar();
+    }
+</script>
+
+</html>
