@@ -27,11 +27,13 @@ def __checkid(id, length=10):
 	"""
 	return id.isdigit() and ((not length) or len(id) == length)
 
-def __checkint(num, low, high):
-	if not (isinstance(num, int) or str(num).isdigit()):
+def __checkint(num, low=None, high=None):
+	try:
+		num = int(num)
+	except:
 		return False
-	num = int(num)
-	return (low is None or low <= num) and (high is None or num <= high)
+	else:
+		return (low is None or low <= num) and (high is None or num <= high)
 
 # rows of table StockUser
 __attrListStockUser = (
@@ -653,6 +655,11 @@ def frozeStock(id, stock_id, amount):
 	"""
 	ret = {'status': False, 'error': None}
 
+	if not __checkint(amount):
+		ret['error'] = 'Froze amount is not a int'
+		return ret
+	amount = int(amount)
+
 	if amount <= 0:
 		ret['error'] = 'Frozed amount must be positive'
 		return ret
@@ -681,6 +688,11 @@ def mvStock(id_1, id_2, stock_id, amount):
 		'error': Error message when 'status'=False
 	"""
 	ret = {'status': False, 'error': None}
+
+	if not __checkint(amount):
+		ret['error'] = 'Moved amount is not a int'
+		return ret
+	amount = int(amount)
 
 	if amount <= 0:
 		ret['error'] = 'Moved amount must be positive'
@@ -918,11 +930,11 @@ def test_stockExchange():
 	cur.execute("SELECT * FROM Stock")
 	print cur.fetchall()
 
-	print frozeStock('1706140001', 170001, 500)
+	print frozeStock('1706140001', '170001', '500')
 	cur.execute("SELECT * FROM Stock")
 	print cur.fetchall()
 
-	print mvStock('1706140001', '1706140002', 170001, 500)
+	print mvStock('1706140001', '1706140002', '170001', '500')
 	cur.execute("SELECT * FROM Stock")
 	print cur.fetchall()
 
