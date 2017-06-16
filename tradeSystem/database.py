@@ -26,7 +26,7 @@ ERROR_MESSAGE = {
 	'Stock user is not frozen': ['该证券账户未挂失'],
 
 	'Field %(field)s could not be empty': ['%(field)s不能为空'],
-	'The format of %(field)s is invalid': ['%(field)s格式不合法'],
+	'The format of %(field)s is invalid': ['%(field)s不合法'],
 	'%(field)s alreadly exist': ['%(field)s已存在'],
 
 	'This user still own some stocks': ['该用户仍持有证券资产']
@@ -59,7 +59,7 @@ ERROR_FIELD = {
 	'StockQueryManager.type': ['type', '权限类型'],
 	'StockQueryManager.name': ['name', '姓名']
 }
-ERROR_LANG = 0 # [0: eng, 1: chs]
+ERROR_LANG = 1 # [0: eng, 1: chs]
 
 def __checkErrmsg(msg):
 	if not isinstance(msg, str):
@@ -71,7 +71,7 @@ def __checkErrmsg(msg):
 		msg = 'Field %(field)s could not be empty'
 	if msg.find('CHECK constraint failed:') == 0:
 		dt['field'] = msg[msg.find(':') + 2 :]
-		msg = 'The format of %(field)s is invalid'
+		msg = '%(field)s is invalid'
 	if msg.find('UNIQUE constraint failed:') == 0:
 		dt['field'] = msg[msg.find(':') + 2 :]
 		msg = '%(field)s alreadly exist'
