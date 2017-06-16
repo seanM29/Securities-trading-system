@@ -26,7 +26,7 @@ ERROR_MESSAGE = {
 	'Stock user is not frozen': ['该证券账户未挂失'],
 
 	'Field %(field)s could not be empty': ['%(field)s不能为空'],
-	'The format of %(field)s is invalid': ['%(field)s不合法'],
+	'%(field)s is invalid': ['%(field)s不合法'],
 	'%(field)s alreadly exist': ['%(field)s已存在'],
 
 	'This user still own some stocks': ['该用户仍持有证券资产']
