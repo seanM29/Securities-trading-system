@@ -851,6 +851,30 @@ def loginStockUserManager(id, password):
 	return ret
 
 @__checkReturnValue
+def getStockQueryManager(id):
+	"""Get the infomation of a stock query manager
+
+	Args:
+		id: id of the stock query manager
+	
+	Return:
+		A dict mapping keys include:
+		'status': True or False. The result of operation.
+		'error': Error message when 'status'=False
+		'result': user info
+	"""
+	ret = {'status': False, 'error': None, 'result': None}
+
+	res = __queryStockQueryManager(id)
+	if isinstance(res, str):
+		ret['error'] = res
+		return ret
+
+	ret['status'] = True
+	ret['result'] = res
+	return ret
+
+@__checkReturnValue
 def loginStockQueryManager(id, password):
 	"""Login into the system as a query manager
 
@@ -863,17 +887,17 @@ def loginStockQueryManager(id, password):
 		'status': True or False. The result of operation.
 		'error': Error message when 'status'=False
 	"""
-	ret = {'status': False, 'error': None}
-	res = __queryStockQueryManager(id)
-
-	if isinstance(res, str):
-		ret['error'] = res
+	ret = getStockQueryManager(id)
+	if not ret['status']:
 		return ret
-	if res['password'] != password:
+
+	same = ret['result']['password'] == password
+	del ret['result']
+	if not same:
+		ret['status'] = False
 		ret['error'] = 'Incorrect password'
 		return ret
 
-	ret['status'] = True
 	return ret
 
 def __connect():
@@ -977,8 +1001,12 @@ def init():
 		);''')
 
 	pw = to_md5("123456")
+
 	cur.execute("INSERT INTO StockUserManager VALUES ('3140103312', '%s', '')" % pw)
-	cur.execute("INSERT INTO StockQueryManager VALUES ('3140103312', '%s', '', '')" % pw)
+
+	cur.execute("INSERT INTO StockQueryManager VALUES ('3140102265', '%s', '房地产', 'sDong')" % pw)
+	cur.execute("INSERT INTO StockQueryManager VALUES ('3140103312', '%s', '能源', 'jlLu')" % pw)
+	cur.execute("INSERT INTO StockQueryManager VALUES ('3140109999', '%s', '数据挖坑', 'Ajanda')" % pw)
 
 	addStockUser("1706140001", {
 								'password': pw,
