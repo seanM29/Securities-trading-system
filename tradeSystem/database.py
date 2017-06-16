@@ -1,13 +1,98 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import os
 import sqlite3
 import hashlib
 
 DB_NAME = 'tradeSystem.db'
-CONN = sqlite3.connect(DB_NAME, isolation_level='EXCLUSIVE', check_same_thread=False)
-cur = CONN.cursor()
-cur.execute("PRAGMA foreign_keys = ON;")
+CONN = None
+cur = None
+
+ERROR_MESSAGE = {
+	'Froze amount is not a int': ['股票交易数量必须为整数'],
+	'Frozed amount must be positive': ['股票交易数量必须大于零'],
+	'Id does not exist': ['ID 不存在'],
+	'Id exist': ['账户已存在'],
+	'Incorrect password': ['密码有误'],
+	'Invalid amount': ['交易数量必须为整数'],
+	'Invalid id': ['账户格式不合法'],
+	'Invalid stock id': ['股票代码格式不合法'],
+	'Invalid stock user id': ['证券账户格式不合法'],
+	'Moved amount is not a int': ['股票交易数量必须为整数'],
+	'Moved amount must be positive': ['股票交易数量必须大于零'],
+	'Stock does not exist': ['股票不存在'],
+	'Stock user is already frozen': ['该证券账户已被挂失'],
+	'Stock user is not frozen': ['该证券账户未挂失'],
+
+	'Field %(field)s could not be empty': ['%(field)s不能为空'],
+	'The format of %(field)s is invalid': ['%(field)s格式不合法'],
+	'%(field)s alreadly exist': ['%(field)s已存在'],
+
+	'This user still own some stocks': ['该用户仍持有证券资产']
+}
+ERROR_FIELD = {
+	'StockUser.id': ['stock user id', '证券账户'],
+	'StockUser.available': ['available', '账户可用性'],
+	'StockUser.password': ['password', '密码'],
+	'StockUser.create_time': ['create time', '账户创建时间'],
+	'StockUser.name': ['name', '姓名'],
+	'StockUser.sex': ['sex', '性别'],
+	'StockUser.id_number': ['id number', '身份证号码'],
+	'StockUser.mobilephone': ['mobilephone', '手机号'],
+	'StockUser.telephone': ['telephone', '座机号'],
+	'StockUser.home_address': ['home address', '家庭地址'],
+	'StockUser.degree': ['degree', '学历'],
+	'StockUser.job': ['jog', '职业'],
+	'StockUser.work_address': ['work address', '工作地址'],
+	'StockUserFund.id': ['stock user id', '证券账户'],
+	'StockUserFund.fund_id': ['fund id', '资金账户'],
+	'Stock.id': ['stock user id', '证券账户'],
+	'Stock.stock_id': ['fund id', '股票代码'],
+	'Stock.own': ['own', '持有股票数量'],
+	'Stock.frozen': ['frozen', '冻结股票数量'],
+	'StockUserManager.id': ['id', '证券管理账户'],
+	'StockUserManager.password': ['password', '密码'],
+	'StockUserManager.name': ['name', '姓名'],
+	'StockQueryManager.id': ['id', '交易管理账户'],
+	'StockQueryManager.password': ['password', '密码'],
+	'StockQueryManager.type': ['type', '权限类型'],
+	'StockQueryManager.name': ['name', '姓名']
+}
+ERROR_LANG = 0 # [0: eng, 1: chs]
+
+def __checkErrmsg(msg):
+	if not isinstance(msg, str):
+		return msg
+
+	dt = {}
+	if msg.find('NOT NULL constraint failed:') == 0:
+		dt['field'] = msg[msg.find(':') + 2 :]
+		msg = 'Field %(field)s could not be empty'
+	if msg.find('CHECK constraint failed:') == 0:
+		dt['field'] = msg[msg.find(':') + 2 :]
+		msg = 'The format of %(field)s is invalid'
+	if msg.find('UNIQUE constraint failed:') == 0:
+		dt['field'] = msg[msg.find(':') + 2 :]
+		msg = '%(field)s alreadly exist'
+	if msg.find('FOREIGN KEY constraint failed') == 0:
+		msg = 'This user still own some stocks'
+
+	if 0 < ERROR_LANG < 2 and msg in ERROR_MESSAGE:
+		msg = ERROR_MESSAGE[msg][ERROR_LANG - 1]
+
+	if 'field' in dt:
+		dt['field'] = dt['field'].replace('$', '.')
+		if dt['field'] in ERROR_FIELD:
+			dt['field'] = ERROR_FIELD[dt['field']][ERROR_LANG]
+	return msg % dt
+
+def __checkReturnValue(func):
+	def __func(*args, **kwargs):
+		ret = func(*args, **kwargs)
+		ret['error'] = __checkErrmsg(ret['error'])
+		return ret
+	return __func
 
 def to_md5(name):
     id = hashlib.md5()
@@ -108,10 +193,7 @@ def __insertStockUser(id, info):
 	try:
 		cur.execute("INSERT INTO Stockuser VALUES (%s)" %(','.join(s)))
 	except Exception as e:
-		e = str(e)
-		if e[: 6] == 'UNIQUE':
-			e = 'Id exist'
-		return e
+		return str(e)
 	else:
 		return None
 
@@ -206,11 +288,8 @@ def __insertFundAccount(id, fund_id):
 		string: error message
 	"""
 	id = str(id)
-	fund_id = str(fund_id)
 	if not __checkid(id):
 		return 'Invalid stock user id'
-	if not __checkid(fund_id, length=None):
-		return 'Invalid fund id'
 
 	try:
 		cur.execute("INSERT INTO StockUserFund VALUES (\"%s\", \"%s\")" %(id, fund_id))
@@ -231,7 +310,7 @@ def __queryFundAccount(id):
 	"""
 	id = str(id)
 	if not __checkid(id):
-		return 'invalid stock user id'
+		return 'Invalid stock user id'
 
 	cur.execute("SELECT * FROM StockUserFund where id == \"%s\"" %(id))
 	res = cur.fetchall()
@@ -250,11 +329,8 @@ def __deleteFundAccount(id, fund_id):
 		string: error message
 	"""
 	id = str(id)
-	fund_id = str(fund_id)
 	if not __checkid(id):
-		return "Invalid stock user id"
-	if not __checkid(fund_id, length=None):
-		return "Invalid fund id"
+		return 'Invalid stock user id'
 
 	try:
 		cur.execute("DELETE FROM StockUserFund where id == \"%s\" and fund_id == \"%s\"" %(id, fund_id))
@@ -316,7 +392,7 @@ def __queryStock(id, stock_id):
 	"""
 	id = str(id)
 	if not __checkid(id):
-		return "invalid stock user id"
+		return 'Invalid stock user id'
 	if not __checkint(stock_id, 0, 999999):
 		return 'Invalid stock id'
 	stock_id = int(stock_id)
@@ -324,7 +400,7 @@ def __queryStock(id, stock_id):
 	cur.execute("SELECT * FROM Stock WHERE id == \"%s\" and stock_id == %d" % (id, stock_id))
 	res = cur.fetchone()
 	if not res:
-		return 'stock does not exist'
+		return 'Stock does not exist'
 	res = {'id': res[0], 'stock_id': res[1], 'own': res[2], 'frozen': res[3]}
 	return res
 
@@ -340,7 +416,7 @@ def __queryStocks(id):
 	"""
 	id = str(id)
 	if not __checkid(id):
-		return "invalid stock user id"
+		return 'Invalid stock user id'
 
 	cur.execute("SELECT * FROM Stock WHERE id == \"%s\"" % (id))
 	res = cur.fetchall()
@@ -381,18 +457,19 @@ def __queryStockQueryManager(id):
 	"""
 	id = str(id)
 	if not __checkid(id):
-		return "invalid id"
+		return 'Invalid id'
 
 	cur.execute("SELECT * FROM StockQueryManager where id == \"%s\"" %(id))
 	res = cur.fetchone()
 	if not res:
-		return "id not exist"
+		return 'Id does not exist'
 
 	res = {'id': res[0], 'password': res[1], 'type': res[2], 'name': res[3]}
 	return res
 
 ################################################################################
 
+@__checkReturnValue
 def addStockUser(id, info):
 	"""Add a stock user
 
@@ -416,6 +493,7 @@ def addStockUser(id, info):
 	ret['status'] = True
 	return ret
 
+@__checkReturnValue
 def updStockUser(id, info):
 	"""Update the infomation of a stock user
 
@@ -441,6 +519,7 @@ def updStockUser(id, info):
 	ret['status'] = True
 	return ret
 
+@__checkReturnValue
 def getStockUser(id):
 	"""Get the infomation of a stock user
 
@@ -470,6 +549,7 @@ def getStockUser(id):
 	ret['result'] = res
 	return ret
 
+@__checkReturnValue
 def loginStockUser(id, password):
 	"""Login into the system
 
@@ -495,6 +575,7 @@ def loginStockUser(id, password):
 
 	return ret
 
+@__checkReturnValue
 def delStockUser(id):
 	"""Delete stock user
 
@@ -517,6 +598,7 @@ def delStockUser(id):
 	ret['status'] = True
 	return ret
 
+@__checkReturnValue
 def frozeStockUser(id):
 	"""Froze a stock user
 
@@ -544,6 +626,7 @@ def frozeStockUser(id):
 	ret['status'] = True
 	return ret
 
+@__checkReturnValue
 def unfrozeStockUser(id):
 	"""Unfroze a stock user
 
@@ -571,6 +654,7 @@ def unfrozeStockUser(id):
 	ret['status'] = True
 	return ret
 
+@__checkReturnValue
 def addFundAccount(id, fund_id):
 	"""Add a fund account to a stock user
 
@@ -594,6 +678,7 @@ def addFundAccount(id, fund_id):
 	ret['status'] = True
 	return ret
 
+@__checkReturnValue
 def getFundAccount(id):
 	"""Get fund accounts of a stock user
 
@@ -617,6 +702,7 @@ def getFundAccount(id):
 	ret['result'] = res
 	return ret
 
+@__checkReturnValue
 def delFundAccount(id, fund_id):
 	"""Delete a fund account
 
@@ -640,6 +726,7 @@ def delFundAccount(id, fund_id):
 	ret['status'] = True
 	return ret
 
+@__checkReturnValue
 def frozeStock(id, stock_id, amount):
 	"""Froze shares of a stock of a stock user
 
@@ -673,6 +760,7 @@ def frozeStock(id, stock_id, amount):
 	ret['status'] = True
 	return ret
 
+@__checkReturnValue
 def mvStock(id_1, id_2, stock_id, amount):
 	"""move frozed shares of a stock between two stock users
 
@@ -712,6 +800,7 @@ def mvStock(id_1, id_2, stock_id, amount):
 	ret['status'] = True
 	return ret
 
+@__checkReturnValue
 def getStocks(id):
 	"""Get stocks of a stock user
 
@@ -735,6 +824,7 @@ def getStocks(id):
 	ret['result'] = res
 	return ret
 
+@__checkReturnValue
 def loginStockUserManager(id, password):
 	"""Login into the system as a user manager
 
@@ -760,6 +850,7 @@ def loginStockUserManager(id, password):
 	ret['status'] = True
 	return ret
 
+@__checkReturnValue
 def loginStockQueryManager(id, password):
 	"""Login into the system as a query manager
 
@@ -785,19 +876,21 @@ def loginStockQueryManager(id, password):
 	ret['status'] = True
 	return ret
 
-###
-#	initialization
+def __connect():
+	global CONN, cur
+	CONN = sqlite3.connect(DB_NAME, isolation_level='EXCLUSIVE', check_same_thread=False)
+	cur = CONN.cursor()
+	cur.execute("PRAGMA foreign_keys = ON;")
+
 def init():
 	"""Initialize database tables
 	"""
-	cur = CONN.cursor()
 
 	cur.execute('''
 		CREATE TABLE StockUser (
 			id char(10),
 			available integer
-				NOT NULL
-				CHECK (available BETWEEN 0 AND 1),
+				NOT NULL,
 			password char(32)
 				NOT NULL,
 
@@ -808,50 +901,58 @@ def init():
 			name nvarchar(64)
 				NOT NULL,
 			sex integer
-				CHECK (sex BETWEEN 0 AND 1),
+				NO TNULL,
 			id_number char(18)
 				NOT NULL
 				UNIQUE,
-			mobilephone varchar(20),
+			mobilephone varchar(20)
+				NOT NULL,
 			telephone varchar(20),
-			home_address nvarchar(256),
-			degree integer
-				CHECK (degree BETWEEN 0 AND 5),
-			job nvarchar(64),
-			work_address nvarchar(256),
+			home_address nvarchar(256)
+				NOT NULL,
+			degree integer,
+			job nvarchar(64)
+				NOT NULL,
+			work_address nvarchar(256)
+				NOT NULL,
 
+			CONSTRAINT StockUser$available CHECK (available BETWEEN 0 AND 1),
+			CONSTRAINT StockUser$sex CHECK (sex BETWEEN 0 AND 1),
+			CONSTRAINT StockUser$id_number CHECK (length(id_number) == 18),
+			CONSTRAINT StockUser$degree CHECK (degree BETWEEN 0 AND 5),
 			PRIMARY KEY (id)
 		);''')
 	cur.execute('''
 		CREATE TABLE StockUserFund(
-			id char(10)
-				REFERENCES StockUser (id)
-					ON DELETE CASCADE
-					ON UPDATE CASCADE,
+			id char(10),
 			fund_id varchar(20)
 				UNIQUE,
 
+			CONSTRAINT StockUserFund$id FOREIGN KEY (id)
+				REFERENCES StockUser (id)
+					ON DELETE CASCADE
+					ON UPDATE CASCADE,
 			PRIMARY KEY (id, fund_id)
 		);''')
 	# frozen is part of own
 	cur.execute('''
 		CREATE TABLE Stock(
-			id char(10)
+			id char(10),
+			stock_id integer,
+
+			own integer
+				NOT NULL,
+			frozen integer
+				NOT NULL,
+
+			CONSTRAINT Stock$stock_id CHECK (stock_id BETWEEN 0 AND 999999),
+			CONSTRAINT Stock$own CHECK (own > 0 and own >= frozen),
+			CONSTRAINT Stock$frozen CHECK (frozen >= 0),
+			CONSTRAINT Stock$id FOREIGN KEY (id)
 				REFERENCES StockUser (id)
 					ON DELETE RESTRICT
 					ON UPDATE CASCADE,
-			stock_id integer
-				CHECK (stock_id BETWEEN 0 AND 999999),
-
-			own integer
-				NOT NULL
-				CHECK (own > 0),
-			frozen integer
-				NOT NULL
-				CHECK (frozen >= 0),
-
-			PRIMARY KEY (id, stock_id),
-			CHECK (frozen <= own)
+			PRIMARY KEY (id, stock_id)
 		);''')
 	cur.execute('''
 		CREATE TABLE StockUserManager(
@@ -881,83 +982,37 @@ def init():
 
 	addStockUser("1706140001", {
 								'password': pw,
-								'sex': 1,
-								'degree': 1,
+								'sex': '1',
+								'degree': '1',
 								'name': 'Kosaka Honoka',
-								'id_number': '330101200108030000'})
+								'id_number': '330101200108030000',
+								'mobilephone': '12333333333',
+								'home_address': 'XXX',
+								'job': 'idol',
+								'work_address': 'XXX'})
 	addStockUser("1706140002", {
 								'password': pw,
-								'sex': 1,
-								'degree': 2,
+								'sex': '1',
+								'degree': '2',
 								'name': 'Nitta Emi',
-								'id_number': '330101198512100000'})
+								'id_number': '330101198512100000',
+								'mobilephone': '12333333333',
+								'home_address': 'XXX',
+								'job': 'singer',
+								'work_address': 'XXX'})
 
-	addFundAccount("1706140001", 1001)
-	addFundAccount("1706140002", 1002)
+	addFundAccount('1706140001', '1001')
+	addFundAccount('1706140002', '1002')
 
-	cur.execute("INSERT INTO Stock VALUES (\"1706140001\", 170001, 1000, 0)")
-	cur.execute("INSERT INTO Stock VALUES (\"1706140002\", 170002, 1000, 0)")
+	cur.execute('INSERT INTO Stock VALUES (\"1706140001\", 170001, 1000, 0)')
+	cur.execute('INSERT INTO Stock VALUES (\"1706140002\", 170002, 1000, 0)')
 
 	CONN.commit()
 
-def test1():
-	t = {
-		'id': '0123456789',
-		'password': '01cd2d699991ea786acf871aa39646dd',
-		'sex': 1,
-		'degree': 3
-	}
-	print addStockUser(t['id'], t)
-	print addStockUser('1111111111', {'password': '01cd2d699991ea786acf871aa39646dd'})
-
-def test2():
-	print addFundAccount('0123456789', 223489)
-	print addFundAccount('0123456789', 2234839)
-	print addFundAccount('1111111111', 2234839)
-	print getStockUser('0123456789')
-	print getFundAccount('0123456789')
-
-def test3():
-	print frozeStockUser('0123456789')
-	print unfrozeStockUser('0123456789')
-	print updStockUser('0123456789', {'degree': 3})
-
-def test_stockExchange():
-	cur.execute("SELECT * FROM StockUser")
-	print cur.fetchall()
-	cur.execute("SELECT * FROM StockUserFund")
-	print cur.fetchall()
-	cur.execute("SELECT * FROM Stock")
-	print cur.fetchall()
-
-	print frozeStock('1706140001', '170001', '500')
-	cur.execute("SELECT * FROM Stock")
-	print cur.fetchall()
-
-	print mvStock('1706140001', '1706140002', '170001', '500')
-	cur.execute("SELECT * FROM Stock")
-	print cur.fetchall()
-
-def testend():
-	cur.execute("SELECT * FROM StockUser")
-	print cur.fetchall()
-	cur.execute("SELECT * FROM StockUserFund")
-	print cur.fetchall()
-
-	print sqlite3.sqlite_version
-
-	delStockUser('0123456789')
-	delStockUser('1111111111')
-	cur.execute("SELECT * FROM StockUser")
-	print cur.fetchall()
-	cur.execute("SELECT * FROM StockUserFund")
-	print cur.fetchall()
-
 if __name__ == "__main__":
-#	init()
-#	test_addUser()
-#	test_fundAccount()
-#	test_froze()
-	test_stockExchange()
-#	testend()
+	os.remove('tradeSystem.db')
+	__connect()
+	init()
+	exit(0)
 
+__connect()
