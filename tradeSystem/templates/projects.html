@@ -139,7 +139,7 @@
             <script src="./static/js/plugins/toastr/toastr.min.js">
             </script>
             <script>
-                var managertype="房地产";
+                var managertype;
                 var data;
         $(document).ready(function(){
 
@@ -153,6 +153,13 @@
 //                });
 
                 simpleLoad(btn, false)
+            });
+             $.get("/get_type", 
+                function(data){
+                var json = eval('(' + data + ')');
+                 managertype=json.result.type;
+               
+               
             });
         });
 

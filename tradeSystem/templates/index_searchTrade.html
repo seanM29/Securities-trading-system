@@ -130,11 +130,18 @@
 
     <script>
 
-
+        var json;
         $(document).ready(function () {
             Cookies.set('userid', '3140102237', { expires: 7, domain: 'localhost', path: '/' });
             console.log(Cookies.get('userid'));
-            $("#managername").text("sd")
+            
+            $.get("/get_type", 
+                function(data){
+                var json = eval('(' + data + ')');
+                 $("#managername").text(json.result.name)
+               
+            });
+
         });
 		
 		window.onbeforeunload=function(){
