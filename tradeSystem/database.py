@@ -1002,7 +1002,7 @@ def init():
 
 	pw = to_md5("123456")
 
-	cur.execute("INSERT INTO StockUserManager VALUES ('3140103312', '%s', '')" % pw)
+	cur.execute("INSERT INTO StockUserManager VALUES ('3140102237', '%s', '')" % pw)
 
 	cur.execute("INSERT INTO StockQueryManager VALUES ('3140102265', '%s', '房地产', 'sDong')" % pw)
 	cur.execute("INSERT INTO StockQueryManager VALUES ('3140103312', '%s', '能源', 'jlLu')" % pw)
