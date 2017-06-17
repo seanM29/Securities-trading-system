@@ -64,7 +64,7 @@
                               
                             </td>
                         </table>
-                        <input class="btn btn-success btn-block" type="submit" value="登录" onclick="encrypt()" />
+                        <input class="btn btn-success btn-block" type="submit" value="登录" />
 
                     </form>
                 </div>
@@ -123,6 +123,7 @@
         var icon = "<i class='fa fa-times-circle'></i> ";
         $("#StaffLoginForm").validate({
             submitHandler: function(form){
+				encrypt();
                 $(form).ajaxSubmit(function(data){
                     var return_val = data;
                     var suc = return_val.split(";")[0];

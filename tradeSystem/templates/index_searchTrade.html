@@ -136,6 +136,16 @@
             console.log(Cookies.get('userid'));
             $("#managername").text("sd")
         });
+		
+		window.onbeforeunload=function(){
+	//必须使用beforeunload
+         var url =window.location+"?close=1";
+          $.ajax({
+              url:url,
+              async:false                //必须采用同步方法
+          });
+		 
+      }
     </script>
 </body>
 

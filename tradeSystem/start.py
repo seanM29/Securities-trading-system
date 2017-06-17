@@ -8,8 +8,10 @@ app = Flask(__name__)
 CORS(app,supports_credentials=True)
 state=[]
 user_mapping={}
+manager_mapping={}
 @app.route('/',methods=['GET','POST'])
 def staff_login():
+    global manager_mapping
     if request.method=="GET":
         if not request.args:
             return render_template("staff_login.html")
@@ -27,6 +29,8 @@ def staff_login():
             elif user_type==u"交易系统管理员":
                 ret = loginStockQueryManager(request.args.get("username"), request.args.get("password"))
                 if ret["status"]:
+                    ip = request.remote_addr
+                    manager_mapping[ip]=request.args.get("username")
                     return "1;%s"%ret["error"]
                     # return render_template("index.html")
                 else:
@@ -58,11 +62,16 @@ def test():
     #ret2=delStockUser('0123456789')
 
 def get_type():
+    global manager_mapping
+    ip = request.remote_addr
     if request.method=="GET":
-        ret=getStockQueryManager(request.args.get("id"))
-        if ret["status"]:
-            ret["result"].pop("id")
-        return json.dumps(ret)
+        if ip in manager_mapping.keys():
+            ret=getStockQueryManager(manager_mapping[ip])
+            if ret["status"]:
+                ret["result"].pop("id")
+            return json.dumps(ret)
+        else:
+            return json.dumps({"status":False,"error":"没有登录","result":None})
 
 def want_sell():
     if request.method=="GET":
@@ -231,7 +240,7 @@ def drop_account():
                         else:
                             return "0;%s" % ret_ret["error"]
                     else:
-                        return "0;Incorrect id_number"
+                        return "0;身份证错误"
                 else:
                     return "0;%s" % ret["error"]
             else:
@@ -276,9 +285,11 @@ def index():
         if ip in state:
             state.remove(ip)
             user_mapping.pop(ip)
-        return "leave?"
+        return "离开？"
     else:
         return render_template("index.html")
+
+
 
 def loss_account():
     global state
@@ -297,7 +308,7 @@ def loss_account():
                         else:
                             return "0;%s"%ret_ret["error"]
                     else:
-                        return "0;Incorrect id_number"
+                        return "0;身份证错误"
                 else:
                     return "0;%s"%ret["error"]
             else:
@@ -355,7 +366,7 @@ def renew_account():
                         else:
                             return "0;%s" % ret_ret["error"]
                     else:
-                        return "0;Incorrect id_number"
+                        return "0;身份证错误"
                 else:
                     return "0;%s" % ret["error"]
             else:
@@ -364,7 +375,14 @@ def renew_account():
         return render_template("no_login.html")
 
 def index_searchTrade():
-    return render_template("index_searchTrade.html")
+    global manager_mapping
+    ip = request.remote_addr
+    if request.args.get("close"):
+        if ip in manager_mapping.keys():
+            manager_mapping.pop(ip)
+        return "离开？"
+    else:
+        return render_template("index_searchTrade.html")
 
 def index_v1():
     return render_template("index_v1.html")
@@ -374,6 +392,9 @@ def on_login():
 
 def projects():
     return render_template("projects.html")
+
+def visualization():
+    return render_template("visualization.html")
 
 def to_md5(name):
     id = hashlib.md5()
