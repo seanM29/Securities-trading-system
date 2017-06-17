@@ -1,80 +1,101 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-    <title> - 项目</title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-
-    <link href="./static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
-    <link href="./static/css/font-awesome.css?v=4.4.0" rel="stylesheet">
-
-    <link href="./static/css/animate.css" rel="stylesheet">
-    <link href="./static/css/style.css?v=4.1.0" rel="stylesheet">
-
-</head>
-
-<body class="gray-bg">
-
-    <div class="wrapper wrapper-content animated fadeInUp">
-        <div class="row">
-            <div class="col-sm-12">
-
-                <div class="ibox">
-                    <div class="ibox-title">
-                        <h5>股票ID交易情况</h5>
-                     
-                    </div>
-                    <div class="ibox-content">
-                        <div class="row m-b-sm m-t-sm">
-                            <div class="col-md-1">
-                                <button type="button" id="loading-example-btn" class="btn btn-white btn-sm" onclick="refresh()"><i class="fa fa-refresh"></i> 刷新</button>
-                            </div>
-                            <div class="col-md-11">
-                                <div class="input-group">
-                                    <input type="text" placeholder="请输入股票ID" class="input-sm form-control"> <span class="input-group-btn">
-                                        <button type="button" class="btn btn-sm btn-primary" onclick="serch()"> 搜索</button> </span>
+    <head>
+        <meta charset="utf-8">
+            <meta content="width=device-width, initial-scale=1.0" name="viewport">
+                <title>
+                    - 项目
+                </title>
+                <meta content="" name="keywords">
+                    <meta content="" name="description">
+                        <link href="./static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+                            <link href="./static/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+                                <link href="./static/css/animate.css" rel="stylesheet">
+                                    <link href="./static/css/style.css?v=4.1.0" rel="stylesheet">
+                                    </link>
+                                </link>
+                            </link>
+                        </link>
+                    </meta>
+                </meta>
+            </meta>
+        </meta>
+    </head>
+    <body class="gray-bg">
+        <div class="wrapper wrapper-content animated fadeInUp">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5 id="TitlenameID">
+                                股票ID交易情况
+                            </h5>
+                            <div class="ibox-tools">
+                            <a class="btn btn-primary btn-xs" id = "profession">行业</a>
+                        </div>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="row m-b-sm m-t-sm">
+                                <div class="col-md-1">
+                                    <button class="btn btn-white btn-sm" id="loading-example-btn" onclick="refresh()" type="button">
+                                        <i class="fa fa-refresh">
+                                        </i>
+                                        刷新
+                                    </button>
+                                </div>
+                                <div class="col-md-11">
+                                    <div class="input-group">
+                                        <input class="input-sm form-control" id="inputStockID" placeholder="请输入股票ID" type="text">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-sm btn-primary" onclick="search()" type="button">
+                                                    搜索
+                                                </button>
+                                            </span>
+                                        </input>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-
-                        <div class="project-list">
-
-                            <table id="show" class="table table-hover">
-                                <thead>
-                                    <td class="project-content">
-                                    <a>状态</a>
-                                    </td>
-                                    <td class="project-content">
-                                    <a>交易指令ID</a>
-                                    </td>
-                                    <td class="project-content">
-                                    <a>价格</a>
-                                    </td>
-                                    <td class="project-content">
-                                    <a>数量</a>
-                                    </td>
-                                    <td class="project-content">
-                                    <a>发起人ID</a>
-                                    </td>
-                                    <td class="project-content">
-                                    <a>时间</a>
-                                    </td>
-                                    <td class="project-content">
-                                    <a>种类</a>
-                                    </td>
-                                </thead>
-                                <tbody>
-                                    
-                                       
-                                       
-                                </tbody>
+                            <div class="project-list">
+                                <table class="table table-hover" id="show">
+                                    <thead>
+                                        <td class="project-content">
+                                            <a>
+                                                状态
+                                            </a>
+                                        </td>
+                                        <td class="project-content">
+                                            <a>
+                                                交易指令ID
+                                            </a>
+                                        </td>
+                                        <td class="project-content">
+                                            <a>
+                                                价格
+                                            </a>
+                                        </td>
+                                        <td class="project-content">
+                                            <a>
+                                                数量
+                                            </a>
+                                        </td>
+                                        <td class="project-content">
+                                            <a>
+                                                发起人ID
+                                            </a>
+                                        </td>
+                                        <td class="project-content">
+                                            <a>
+                                                时间
+                                            </a>
+                                        </td>
+                                        <td class="project-content">
+                                            <a>
+                                                种类
+                                            </a>
+                                        </td>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -82,40 +103,44 @@
                 </div>
             </div>
         </div>
-    <template id="productrow">
-    <tr>
-        <td class="project-status">
-            <span class="label label-default">
-            </span>
-        </td>
-        <td class="project-content">
-        </td>
-        <td class="project-content">
-        </td>
-        <td class="project-content">
-        </td>
-        <td class="project-content">
-        </td>
-        <td class="project-content">
-        </td>
-        <td class="project-content">
-        </td>
-    </tr>
-    </template>
-    <!-- 全局js -->
-    <script src="./static/js/jquery.min.js?v=2.1.4"></script>
-    <script src="./static/js/bootstrap.min.js?v=3.3.6"></script>
-
-
-    <!-- 自定义js -->
-    <script src="./static/js/content.js?v=1.0.0"></script>
-    <script type="text/javascript"></script>
- 
-
-
-    
-    <script>
-       
+        <template id="productrow">
+            <tr>
+                <td class="project-status">
+                    <span class="label label-default">
+                    </span>
+                </td>
+                <td class="project-content">
+                </td>
+                <td class="project-content">
+                </td>
+                <td class="project-content">
+                </td>
+                <td class="project-content">
+                </td>
+                <td class="project-content">
+                </td>
+                <td class="project-content">
+                </td>
+            </tr>
+        </template>
+        <!-- 全局js -->
+        <script src="./static/js/jquery.min.js?v=2.1.4">
+        </script>
+        <script src="./static/js/bootstrap.min.js?v=3.3.6">
+        </script>
+        <!-- 自定义js -->
+        <script src="./static/js/content.js?v=1.0.0">
+        </script>
+        <script type="text/javascript">
+        </script>
+        <script src="./static/js/plugins/toastr/jquery.toastmessage.js">
+        </script>
+        <link href="./static/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+            <script src="./static/js/plugins/toastr/toastr.min.js">
+            </script>
+            <script>
+                var managertype="房地产";
+                var data;
         $(document).ready(function(){
 
             $('#loading-example-btn').click(function () {
@@ -143,26 +168,134 @@
             }
         }
 
-        function serch(){
-            var data = [
-                { "状态":"已完成" , "交易指令ID":"AB1234567" , "价格":"25元", "数量":"300股", "发起人ID":"CT12345678", "时间":"2017.1.8", "种类":"出售"},
-                { "状态":"已完成" , "交易指令ID":"AB2234567" , "价格":"35元", "数量":"300股", "发起人ID":"CT12345678", "时间":"2017.1.9", "种类":"出售"},
-                { "状态":"进行中" , "交易指令ID":"AB3234567" , "价格":"45元", "数量":"300股", "发起人ID":"CT12345678", "时间":"2017.1.7", "种类":"出售"}
-            ];
+        function search(){
+
+            str =  $("#inputStockID").val()
+            if(str==""){
+                toastr.options.closeButton = true;
+                toastr.options.timeOut = 1000;
+                toastr.options.positionClass='toast-top-right';
+                toastr.error('请输入股票');
+                return
+            }
+            if(managertype=="能源"){  
+                if(str=="300274"){
+                    type = 1;
+                    $("#profession").text("能源行业")
+                    $("#TitlenameID").text("阳光电源(300274)")
+                    
+                }
+
+                else if(str=="600875"){
+                    type = 2;
+                    $("#profession").text("能源行业")
+                    $("#TitlenameID").text("东方电气(600875)")
+                }
+                else{
+                    toastr.options.closeButton = true;
+                    toastr.options.timeOut = 1000;
+                    toastr.options.positionClass='toast-top-right';
+                    toastr.error('没有权限查询该股票');
+                    return
+                }
+                GetEnergyData()
+            }
+            if(managertype=="房地产"){
+                 if(str=="000002"){
+                    type = 3;
+                    $("#profession").text("房地产行业")
+                    $("#TitlenameID").text("万科A(000002)")
+                }
+
+               
+                else{
+                    toastr.options.closeButton = true;
+                    toastr.options.timeOut = 1000;
+                    toastr.options.positionClass='toast-top-right';
+                    toastr.error('没有权限查询该股票');
+                    return
+                }
+                GetRealtyData()
+            }
+
+            $("#show tbody").html("");
             addItem(data)
 
+
         }
+
+        function GetEnergyData(){
+            if(type==1){
+                data = [
+                    { "状态":"已完成" , "交易指令ID":"SE001001" , "价格":"20元", "数量":"300股", "发起人ID":"A001002", "时间":"2017.6.6", "种类":"出售"},
+                    { "状态":"已完成" , "交易指令ID":"BU001001" , "价格":"20元", "数量":"300股", "发起人ID":"A001001", "时间":"2017.6.7", "种类":"购买"},
+                    { "状态":"已完成" , "交易指令ID":"SE001002" , "价格":"25元", "数量":"300股", "发起人ID":"A001002", "时间":"2017.6.6", "种类":"出售"},
+                    { "状态":"已完成" , "交易指令ID":"BU001002" , "价格":"25元", "数量":"300股", "发起人ID":"A001001", "时间":"2017.6.7", "种类":"购买"},
+                    { "状态":"已完成" , "交易指令ID":"SE001003" , "价格":"25元", "数量":"310股", "发起人ID":"A001002", "时间":"2017.6.8", "种类":"出售"},
+                    { "状态":"已完成" , "交易指令ID":"BU001003" , "价格":"25元", "数量":"310股", "发起人ID":"A001004", "时间":"2017.6.9", "种类":"购买"},
+                    { "状态":"已完成" , "交易指令ID":"SE001004" , "价格":"28元", "数量":"320股", "发起人ID":"A001002", "时间":"2017.6.10", "种类":"出售"},
+                    { "状态":"已完成" , "交易指令ID":"BU001004" , "价格":"28元", "数量":"320股", "发起人ID":"A001001", "时间":"2017.6.10", "种类":"购买"},
+                    { "状态":"进行中" , "交易指令ID":"SE001005" , "价格":"36元", "数量":"400股", "发起人ID":"A001002", "时间":"2017.6.11", "种类":"出售"},
+                ];
+             }
+            if(type==2){          
+                data = [
+                    { "状态":"已完成" , "交易指令ID":"SE002001" , "价格":"10元", "数量":"300股", "发起人ID":"A001002", "时间":"2017.6.6", "种类":"出售"},
+                    { "状态":"已完成" , "交易指令ID":"BU002001" , "价格":"10元", "数量":"300股", "发起人ID":"A001001", "时间":"2017.6.7", "种类":"购买"},
+                    { "状态":"已完成" , "交易指令ID":"SE002002" , "价格":"15元", "数量":"300股", "发起人ID":"A001002", "时间":"2017.6.6", "种类":"出售"},
+                    { "状态":"已完成" , "交易指令ID":"BU002002" , "价格":"15元", "数量":"300股", "发起人ID":"A001001", "时间":"2017.6.7", "种类":"购买"},
+                    { "状态":"已完成" , "交易指令ID":"SE002003" , "价格":"15元", "数量":"310股", "发起人ID":"A001002", "时间":"2017.6.8", "种类":"出售"},
+                    { "状态":"已完成" , "交易指令ID":"BU002003" , "价格":"15元", "数量":"310股", "发起人ID":"A001004", "时间":"2017.6.9", "种类":"购买"},
+                    { "状态":"已完成" , "交易指令ID":"SE002004" , "价格":"18元", "数量":"320股", "发起人ID":"A001002", "时间":"2017.6.10", "种类":"出售"},
+                    { "状态":"已完成" , "交易指令ID":"BU002004" , "价格":"18元", "数量":"320股", "发起人ID":"A001001", "时间":"2017.6.10", "种类":"购买"},
+                    { "状态":"进行中" , "交易指令ID":"SE002005" , "价格":"26元", "数量":"400股", "发起人ID":"A001002", "时间":"2017.6.11", "种类":"出售"},
+                ];
+            }
+        }
+
+        function GetRealtyData(){
+            if(type==3){
+                data = [
+                    { "状态":"已完成" , "交易指令ID":"SE003001" , "价格":"20元", "数量":"300股", "发起人ID":"A001002", "时间":"2017.6.6", "种类":"出售"},
+                    { "状态":"已完成" , "交易指令ID":"BU003001" , "价格":"20元", "数量":"300股", "发起人ID":"A001001", "时间":"2017.6.7", "种类":"购买"},
+                    { "状态":"已完成" , "交易指令ID":"SE003002" , "价格":"19元", "数量":"300股", "发起人ID":"A001002", "时间":"2017.6.6", "种类":"出售"},
+                    { "状态":"已完成" , "交易指令ID":"BU003002" , "价格":"19元", "数量":"300股", "发起人ID":"A001001", "时间":"2017.6.7", "种类":"购买"},
+                    { "状态":"已完成" , "交易指令ID":"SE003003" , "价格":"21元", "数量":"310股", "发起人ID":"A001002", "时间":"2017.6.8", "种类":"出售"},
+                    { "状态":"已完成" , "交易指令ID":"BU003003" , "价格":"21元", "数量":"310股", "发起人ID":"A001004", "时间":"2017.6.9", "种类":"购买"},
+                    { "状态":"已完成" , "交易指令ID":"SE003004" , "价格":"20元", "数量":"320股", "发起人ID":"A001002", "时间":"2017.6.10", "种类":"出售"},
+                    { "状态":"已完成" , "交易指令ID":"BU003004" , "价格":"20元", "数量":"320股", "发起人ID":"A001001", "时间":"2017.6.10", "种类":"购买"},
+                    { "状态":"进行中" , "交易指令ID":"SE003005" , "价格":"20元", "数量":"400股", "发起人ID":"A001002", "时间":"2017.6.11", "种类":"出售"},
+                ];
+             }
+           
+        }
+
+
+
+
+
         function refresh(){
            
             $("#show tbody").html("");
-            var data = [
-                { "状态":"已完成" , "交易指令ID":"AB1234567" , "价格":"25元", "数量":"300股", "发起人ID":"CT12345678", "时间":"2017.1.8", "种类":"出售"},
-                { "状态":"已完成" , "交易指令ID":"AB2234567" , "价格":"35元", "数量":"300股", "发起人ID":"CT12345678", "时间":"2017.1.9", "种类":"出售"},
-                { "状态":"进行中" , "交易指令ID":"AB3234567" , "价格":"45元", "数量":"300股", "发起人ID":"CT12345678", "时间":"2017.1.7", "种类":"出售"}
-            ];
+                if(type==1){
+                    data[8].状态="已完成"
+                    data[9]= { "状态":"已完成" , "交易指令ID":"BU001005" , "价格":"36元", "数量":"400股", "发起人ID":"A001003", "时间":"2017.6.11", "种类":"购买"}
+                }
+                if(type==2){
+                    data[8].状态="已完成"
+                    data[9]=  { "状态":"已完成" , "交易指令ID":"BU002005" , "价格":"26元", "数量":"400股", "发起人ID":"A001003", "时间":"2017.6.11", "种类":"购买"}
+                }
+                if(type==3){
+                    data[8].状态="已完成"
+                    data[9]=  { "状态":"已完成" , "交易指令ID":"BU003005" , "价格":"20元", "数量":"400股", "发起人ID":"A001003", "时间":"2017.6.11", "种类":"购买"}
+                }
+            
             addItem(data)
-
         }
+            
+            
+
+        
 
         function addItem(data){
           
@@ -181,15 +314,13 @@
                 td[3].textContent = data[i].数量
                 td[4].textContent = data[i].发起人ID
                 td[5].textContent = data[i].时间
-                td[6].textContent = data[i].状态
+                td[6].textContent = data[i].种类
                 var tb = document.querySelector("tbody");
                 var clone = document.importNode(t.content, true);
                 tb.appendChild(clone);
             }
         }
-    </script>
-        
-    
-
+            </script>
+        </link>
     </body>
 </html>
