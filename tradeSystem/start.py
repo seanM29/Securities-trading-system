@@ -3,7 +3,9 @@ from flask import Flask,render_template,request#,jsonify
 from database import *
 import json
 import hashlib
+from flask_cors import *
 app = Flask(__name__)
+CORS(app,supports_credentials=True)
 state=[]
 user_mapping={}
 @app.route('/',methods=['GET','POST'])
@@ -55,6 +57,12 @@ def test():
         #ret1=delStockUser('1234567890')
     #ret2=delStockUser('0123456789')
 
+def get_type():
+    if request.method=="GET":
+        ret=getStockQueryManager(request.args.get("id"))
+        if ret["status"]:
+            ret["result"].pop("id")
+        return json.dumps(ret)
 
 def want_sell():
     if request.method=="GET":
@@ -252,10 +260,13 @@ def signout():
     global state
     global user_mapping
     ip = request.remote_addr
-    if ip in state:
-        state.remove(ip)
-        user_mapping.pop(ip)
-    return render_template("user_login.html")
+    if request.method=="GET":
+        if ip in state:
+            state.remove(ip)
+            user_mapping.pop(ip)
+            return render_template("user_login.html")
+        else:
+            return render_template("no_login.html")
 
 def index():
     global state
