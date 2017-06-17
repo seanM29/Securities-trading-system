@@ -322,7 +322,10 @@ background-color: #E7E7E7;
                         toastr.options.closeButton = true;
                         toastr.options.timeOut = 1000;
                         toastr.error('开户失败! '+ err_msg);
-                }});
+                }
+				$("#password").val("");
+				$("#confirm").val("");
+				});
     
             }
         }).validate({
