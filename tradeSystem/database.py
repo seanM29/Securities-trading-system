@@ -1043,15 +1043,17 @@ def init():
 
 	addFundAccount('1706140001', '1001')
 	addFundAccount('1706140002', '1002')
+	addFundAccount('1706140001', '10000002') # important
+	addFundAccount('1706140002', '10000003') # important
 
 	cur.execute('INSERT INTO Stock VALUES (\"1706140001\", 170001, 1000, 0)')
 	cur.execute('INSERT INTO Stock VALUES (\"1706140002\", 170002, 1000, 0)')
-
-	cur.execute('INSERT INTO Stock VALUES (\"1706140001\", 600822, 100000, 0)')
-	cur.execute('INSERT INTO Stock VALUES (\"1706140002\", 603131, 100000, 0)')
 	
 	cur.execute('INSERT INTO Stock VALUES (\"2333333333\", 600822, 33554432, 0)')
 	cur.execute('INSERT INTO Stock VALUES (\"2333333333\", 603131, 33554432, 0)')
+
+	cur.execute('INSERT INTO Stock VALUES (\"1706140001\", 600822, 100000, 0)')
+	cur.execute('INSERT INTO Stock VALUES (\"1706140002\", 603131, 100000, 0)')
 
 	CONN.commit()
 
