@@ -109,7 +109,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li><a class="J_menuItem" onclick="user_logout()" href="signout">
+                    <li><a class="J_menuItem" href="signout">
                             <i class="fa fa-sign-in" aria-hidden="true"></i>
                             <span class="nav-label">账户登出</span>
                         </a>
@@ -181,11 +181,7 @@
     toastr.options.closeButton = true;
     toastr.options.timeOut = 1000;
     toastr.info('您好，亲爱的管理员');
-    function user_logout() {
-        toastr.options.closeButton = true;
-        toastr.options.timeOut = 1000;
-        toastr.info('登出');
-    }
+    
 
     window.onbeforeunload=function(){
 	//必须使用beforeunload
