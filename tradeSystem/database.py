@@ -1010,6 +1010,16 @@ def init():
 	cur.execute("INSERT INTO StockQueryManager VALUES ('3140103312', '%s', '能源', 'jlLu')" % pw)
 	cur.execute("INSERT INTO StockQueryManager VALUES ('3140109999', '%s', '数据挖坑', 'Ajanda')" % pw)
 
+	addStockUser("2333333333", {
+								'password': to_md5("362880"),
+								'sex': '0',
+								'degree': '2',
+								'name': 'The Big Brother',
+								'id_number': '330101000101010001',
+								'mobilephone': '17866666666',
+								'home_address': '不可知之地',
+								'job': 'Archer',
+								'work_address': '浙江省杭州市浙江大学玉泉校区'})
 	addStockUser("1706140001", {
 								'password': pw,
 								'sex': '1',
@@ -1017,9 +1027,9 @@ def init():
 								'name': 'Kosaka Honoka',
 								'id_number': '330101200108030000',
 								'mobilephone': '12333333333',
-								'home_address': 'XXX',
+								'home_address': '穗村',
 								'job': 'idol',
-								'work_address': 'XXX'})
+								'work_address': '音乃木坂学院'})
 	addStockUser("1706140002", {
 								'password': pw,
 								'sex': '1',
@@ -1029,13 +1039,19 @@ def init():
 								'mobilephone': '12333333333',
 								'home_address': 'XXX',
 								'job': 'singer',
-								'work_address': 'XXX'})
+								'work_address': 'eMusic'})
 
 	addFundAccount('1706140001', '1001')
 	addFundAccount('1706140002', '1002')
 
 	cur.execute('INSERT INTO Stock VALUES (\"1706140001\", 170001, 1000, 0)')
 	cur.execute('INSERT INTO Stock VALUES (\"1706140002\", 170002, 1000, 0)')
+
+	cur.execute('INSERT INTO Stock VALUES (\"1706140001\", 600822, 100000, 0)')
+	cur.execute('INSERT INTO Stock VALUES (\"1706140002\", 603131, 100000, 0)')
+	
+	cur.execute('INSERT INTO Stock VALUES (\"2333333333\", 600822, 33554432, 0)')
+	cur.execute('INSERT INTO Stock VALUES (\"2333333333\", 603131, 33554432, 0)')
 
 	CONN.commit()
 
